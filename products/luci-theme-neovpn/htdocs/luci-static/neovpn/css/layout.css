@@ -1,0 +1,174 @@
+.neovpn-theme .neovpn-shell {
+  display: grid;
+  grid-template-columns: var(--neovpn-layout-sidebar-width) minmax(0, 1fr);
+  grid-template-rows: var(--neovpn-layout-header-height) minmax(0, 1fr);
+  min-height: 100dvh;
+  background: var(--neovpn-surface-page);
+}
+
+@keyframes neo-shell-enter-chrome {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes neo-shell-enter-main {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.neovpn-theme.neo-shell-enter .neovpn-header,
+.neovpn-theme.neo-shell-enter .neovpn-sidebar {
+  animation: neo-shell-enter-chrome 180ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.neovpn-theme.neo-shell-enter .neovpn-content {
+  animation: neo-shell-enter-main 210ms cubic-bezier(0.2, 0.8, 0.2, 1) 35ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neo-shell-enter .neo-topbar,
+  .neo-shell-enter .neo-context-nav,
+  .neo-shell-enter .neo-main-content,
+  .neovpn-theme.neo-shell-enter .neovpn-header,
+  .neovpn-theme.neo-shell-enter .neovpn-sidebar,
+  .neovpn-theme.neo-shell-enter .neovpn-content {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+.neovpn-theme .neovpn-sidebar {
+  grid-column: 1;
+  grid-row: 2;
+  position: sticky;
+  top: var(--neovpn-layout-header-height);
+  z-index: var(--neovpn-z-sidebar);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  height: calc(100dvh - var(--neovpn-layout-header-height));
+  min-height: 0;
+  padding: 0.9rem 0.75rem 0.8rem;
+  background: var(--neovpn-shell-surface-sidebar);
+  border-inline-end: 1px solid var(--neovpn-shell-border);
+  overflow: hidden;
+}
+
+.neovpn-theme .neovpn-main {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: linear-gradient(180deg, rgba(7, 10, 18, 0.52), rgba(4, 7, 15, 0) 13rem);
+}
+
+.neovpn-theme .neovpn-header {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: var(--neovpn-layout-sidebar-width) minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 0;
+  min-width: 0;
+  min-height: var(--neovpn-layout-header-height);
+  padding-inline: 0 1.5rem;
+  background: var(--neovpn-shell-surface-header);
+  border-bottom: 1px solid var(--neovpn-shell-border);
+  box-shadow: none;
+  position: sticky;
+  top: 0;
+  z-index: var(--neovpn-z-header);
+  transition: background-color var(--neovpn-motion-shell), border-color var(--neovpn-motion-shell), box-shadow var(--neovpn-motion-shell);
+}
+
+.neovpn-theme .neovpn-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding:
+    1.35rem
+    max(
+      var(--neovpn-layout-shell-gutter),
+      calc((100% - var(--neovpn-layout-shell-max-width)) / 2 + var(--neovpn-layout-shell-gutter))
+    )
+    1.7rem;
+  overflow-x: hidden;
+}
+
+.neovpn-theme .neovpn-content__inner {
+  display: grid;
+  gap: var(--neovpn-layout-shell-gap);
+  width: 100%;
+  min-width: 0;
+  align-content: start;
+}
+
+.neovpn-theme .neovpn-content__notice {
+  width: 100%;
+  margin: 0;
+  padding:
+    var(--neovpn-layout-shell-gap)
+    max(
+      var(--neovpn-layout-shell-gutter),
+      calc((100% - var(--neovpn-layout-shell-max-width)) / 2 + var(--neovpn-layout-shell-gutter))
+    )
+    0;
+}
+
+.neovpn-theme .neovpn-overlays {
+  position: fixed;
+  inset: 0;
+  z-index: var(--neovpn-z-overlay);
+  pointer-events: none;
+}
+
+.neovpn-theme.neovpn-theme--drawer-open .neovpn-overlays {
+  pointer-events: auto;
+}
+
+.neovpn-theme .neovpn-overlay--drawer {
+  position: absolute;
+  inset: 0;
+  background: var(--neovpn-surface-overlay);
+}
+
+.neovpn-theme .neovpn-content__inner > * {
+  min-width: 0;
+}
+
+.neovpn-theme #tabmenu:empty {
+  display: none;
+}
+
+.neovpn-theme #tabmenu:not(:empty) {
+  margin-bottom: calc(var(--neovpn-layout-shell-gap) - var(--neovpn-space-2));
+}
+
+.neovpn-theme #view {
+  min-width: 0;
+}
+
+.neovpn-theme #view > h2:first-child {
+  margin-bottom: var(--neovpn-layout-shell-gap);
+}
+
+.neovpn-theme #view > p:first-of-type {
+  margin-top: calc(var(--neovpn-layout-shell-gap-tight) * -0.2);
+  margin-bottom: var(--neovpn-layout-shell-gap);
+}

@@ -1,0 +1,67 @@
+{% const boardinfo = ubus.call('system', 'board'); %}
+
+{% include('header', { blank_page: true }) %}
+
+<main class="neovpn-auth-shell">
+  <div class="neovpn-auth-bg" aria-hidden="true">
+    <div class="neovpn-auth-bg__mesh neovpn-auth-bg__mesh--left"></div>
+    <div class="neovpn-auth-bg__mesh neovpn-auth-bg__mesh--right"></div>
+    <div class="neovpn-auth-bg__wave neovpn-auth-bg__wave--left"></div>
+    <div class="neovpn-auth-bg__wave neovpn-auth-bg__wave--right"></div>
+  </div>
+  <section class="neovpn-auth-layout" aria-labelledby="neovpn-login-title">
+    <section class="neovpn-auth-panel neovpn-panel">
+      <header class="neovpn-auth-panel__header">
+        <div class="neovpn-auth-mark-wrap">
+          <img class="neovpn-auth-mark" src="{{ media }}/img/logo-neovpn.png" alt="" aria-hidden="true">
+        </div>
+        <div class="neovpn-auth-panel__brand">NeoVPN</div>
+      </header>
+
+      {% if (fuser): %}
+      <div class="alert-message error neovpn-auth-error" role="alert">
+        <span class="neovpn-auth-error__icon" aria-hidden="true">!</span>
+        {{ _('Invalid username and/or password! Please try again.') }}
+      </div>
+      {% endif %}
+
+      <form method="post" class="neovpn-auth-form">
+        <div class="neovpn-auth-form__field">
+          <label class="neovpn-visually-hidden neovpn-auth-form__label" for="luci_username">{{ _('Username') }}</label>
+          <div class="neovpn-auth-form__control">
+            <span class="neovpn-auth-form__icon neovpn-auth-form__icon--user" aria-hidden="true"></span>
+            <input class="neovpn-auth-form__input" name="luci_username" id="luci_username" type="text" autocomplete="username" placeholder="{{ _('Username') }}" value="{{ entityencode(duser, true) }}">
+          </div>
+        </div>
+        <div class="neovpn-auth-form__field">
+          <label class="neovpn-visually-hidden neovpn-auth-form__label" for="luci_password">{{ _('Password') }}</label>
+          <div class="neovpn-auth-form__control">
+            <span class="neovpn-auth-form__icon neovpn-auth-form__icon--lock" aria-hidden="true"></span>
+            <input class="neovpn-auth-form__input" name="luci_password" id="luci_password" type="password" autocomplete="current-password" placeholder="{{ _('Password') }}" autofocus>
+            <span class="neovpn-auth-form__icon neovpn-auth-form__icon--peek" aria-hidden="true"></span>
+          </div>
+        </div>
+        <div class="neovpn-auth-form__option">
+          <span class="neovpn-auth-form__checkbox" aria-hidden="true"></span>
+          <span class="neovpn-auth-form__option-label">{{ _('Remember me') }}</span>
+        </div>
+        <div class="neovpn-auth-form__actions">
+          <button class="cbi-button cbi-button-positive neovpn-auth-form__submit" type="submit">{{ _('Sign In') }}</button>
+        </div>
+      </form>
+
+      <footer class="neovpn-auth-panel__footer">
+        <div class="neovpn-auth-panel__meta-group">
+          <div class="neovpn-auth-panel__meta-label">{{ _('OpenWrt Version') }}</div>
+          <div class="neovpn-auth-panel__meta">{{ boardinfo?.release?.description ?? 'OpenWrt' }}</div>
+        </div>
+        <div class="neovpn-auth-panel__meta-group neovpn-auth-panel__meta-group--host">
+          <div class="neovpn-auth-panel__meta-label">{{ _('Hostname') }}</div>
+          <div class="neovpn-auth-panel__meta neovpn-auth-panel__meta--host">{{ boardinfo?.hostname ?? 'router.local' }}</div>
+        </div>
+      </footer>
+    </section>
+  </section>
+</main>
+
+{% include('footer', { blank_page: true }) %}

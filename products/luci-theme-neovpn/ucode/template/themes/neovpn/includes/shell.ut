@@ -1,0 +1,7 @@
+<div class="neovpn-shell">
+  {% include('themes/neovpn/includes/topbar') %}
+  {% include('themes/neovpn/includes/sidebar') %}
+  <div class="neovpn-main">
+    <main class="neovpn-content" id="maincontent">
+      <div class="neovpn-content__inner">
+        <div id="tabmenu"></div>

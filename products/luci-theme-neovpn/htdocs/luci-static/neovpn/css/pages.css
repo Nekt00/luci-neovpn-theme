@@ -1,0 +1,3088 @@
+.neovpn-theme.neovpn-auth {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 18% 50%, rgba(78, 233, 219, 0.075), transparent 34rem),
+    radial-gradient(circle at 82% 44%, rgba(220, 103, 229, 0.08), transparent 35rem),
+    linear-gradient(180deg, #04070f 0%, #060b14 54%, #070911 100%);
+}
+
+.neovpn-theme .neovpn-auth-shell {
+  display: grid;
+  align-items: center;
+  min-height: 100vh;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  position: relative;
+  overflow: hidden;
+}
+
+.neovpn-theme .neovpn-auth-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: min(100%, 33rem);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.neovpn-theme .neovpn-auth-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 16% 56%, rgba(54, 227, 218, 0.055), transparent 30rem),
+    radial-gradient(circle at 84% 42%, rgba(217, 101, 230, 0.06), transparent 31rem);
+}
+
+.neovpn-theme .neovpn-auth-bg__mesh,
+.neovpn-theme .neovpn-auth-bg__wave {
+  position: absolute;
+}
+
+.neovpn-theme .neovpn-auth-bg__mesh {
+  display: none;
+}
+
+.neovpn-theme .neovpn-auth-bg__mesh--left {
+  top: 19%;
+  left: 3%;
+}
+
+.neovpn-theme .neovpn-auth-bg__mesh--right {
+  top: 22%;
+  right: 4%;
+}
+
+.neovpn-theme .neovpn-auth-bg__wave {
+  display: none;
+}
+
+.neovpn-theme .neovpn-auth-bg__wave::before,
+.neovpn-theme .neovpn-auth-bg__wave::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.45) 0 0.9px, transparent 1.4px),
+    transparent;
+  background-size: 0.44rem 0.44rem, auto;
+  mask-image: linear-gradient(180deg, transparent 16%, rgba(0, 0, 0, 0.94) 36%, rgba(0, 0, 0, 0.94) 72%, transparent 100%);
+}
+
+.neovpn-theme .neovpn-auth-bg__wave::after {
+  transform: translateY(0.6rem) scale(0.98);
+  opacity: 0.42;
+}
+
+.neovpn-theme .neovpn-auth-bg__wave--left {
+  left: -6rem;
+  bottom: 6%;
+}
+
+.neovpn-theme .neovpn-auth-bg__wave--left::before,
+.neovpn-theme .neovpn-auth-bg__wave--left::after {
+  background-color: rgba(0, 212, 255, 0.055);
+}
+
+.neovpn-theme .neovpn-auth-bg__wave--right {
+  right: -5rem;
+  bottom: 10%;
+}
+
+.neovpn-theme .neovpn-auth-bg__wave--right::before,
+.neovpn-theme .neovpn-auth-bg__wave--right::after {
+  background-color: rgba(223, 73, 216, 0.055);
+}
+
+.neovpn-theme .neovpn-auth-panel {
+  width: 100%;
+  padding: clamp(1.9rem, 2.7vw, 2.2rem) clamp(1.7rem, 2.4vw, 1.9rem) clamp(1.8rem, 2.5vw, 2.05rem);
+  background:
+    linear-gradient(180deg, rgba(9, 14, 24, 0.9), rgba(7, 10, 18, 0.88)),
+    rgba(7, 10, 18, 0.72);
+  border-color: rgba(111, 127, 160, 0.18);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  position: relative;
+  overflow: hidden;
+}
+
+.neovpn-theme .neovpn-auth-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(30, 216, 232, 0.86), rgba(213, 91, 224, 0.82));
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.52;
+  pointer-events: none;
+}
+
+.neovpn-theme .neovpn-auth-panel__header,
+.neovpn-theme .neovpn-auth-form {
+  display: grid;
+}
+
+.neovpn-theme .neovpn-auth-panel__header {
+  justify-items: center;
+  gap: 1.125rem;
+  margin-bottom: 1.45rem;
+}
+
+.neovpn-theme .neovpn-auth-mark-wrap {
+  inline-size: clamp(112px, 9.5vw, 136px);
+  max-width: 100%;
+}
+
+.neovpn-theme .neovpn-auth-mark {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  aspect-ratio: auto;
+  margin: 0;
+  filter: drop-shadow(0 10px 18px rgba(114, 86, 219, 0.12));
+}
+
+.neovpn-theme .neovpn-auth-panel__brand {
+  font-size: clamp(1.95rem, 4vw, 2.3rem);
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 0.94;
+  text-align: center;
+  background: linear-gradient(90deg, #ffffff 0%, #f4f7ff 24%, #32cfff 62%, #b25cff 100%);
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.neovpn-theme .neovpn-auth-panel__title {
+  color: rgba(45, 226, 247, 0.96);
+  font-size: 0.94rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
+.neovpn-theme .neovpn-auth-form {
+  gap: 0.8rem;
+}
+
+.neovpn-theme .neovpn-auth-form__field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.neovpn-theme .neovpn-auth-form__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.neovpn-theme .neovpn-auth-form__input {
+  min-height: 3.5rem;
+  padding-block: 0.72rem;
+  padding-inline: 3rem 3.15rem;
+  border-color: rgba(112, 130, 164, 0.3);
+  border-radius: 0.8rem;
+  background: rgba(12, 17, 29, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.025),
+    0 0 0 1px rgba(255, 255, 255, 0.015);
+  color: rgba(248, 250, 255, 0.98);
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.neovpn-theme .neovpn-auth-form__input::placeholder {
+  color: rgba(178, 186, 204, 0.86);
+}
+
+.neovpn-theme .neovpn-auth-form__input:hover {
+  border-color: rgba(125, 150, 191, 0.42);
+}
+
+.neovpn-theme .neovpn-auth-form__input:focus {
+  border-color: rgba(72, 211, 228, 0.52);
+  background: rgba(12, 17, 29, 0.88);
+  box-shadow:
+    0 0 0 2px rgba(72, 211, 228, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.neovpn-theme .neovpn-auth-form__icon {
+  position: absolute;
+  top: 50%;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: rgba(186, 194, 212, 0.82);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.neovpn-theme .neovpn-auth-form__icon::before,
+.neovpn-theme .neovpn-auth-form__icon::after {
+  content: "";
+  position: absolute;
+}
+
+.neovpn-theme .neovpn-auth-form__icon--user,
+.neovpn-theme .neovpn-auth-form__icon--lock {
+  left: 1.1rem;
+}
+
+.neovpn-theme .neovpn-auth-form__icon--user::before {
+  top: 0;
+  left: 0.24rem;
+  width: 0.62rem;
+  height: 0.62rem;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+}
+
+.neovpn-theme .neovpn-auth-form__icon--user::after {
+  left: 0.1rem;
+  bottom: 0.05rem;
+  width: 0.9rem;
+  height: 0.45rem;
+  border: 1.5px solid currentColor;
+  border-top: 0;
+  border-radius: 0 0 0.6rem 0.6rem;
+}
+
+.neovpn-theme .neovpn-auth-form__icon--lock::before {
+  left: 0.16rem;
+  bottom: 0.08rem;
+  width: 0.82rem;
+  height: 0.62rem;
+  border: 1.5px solid currentColor;
+  border-radius: 0.15rem;
+}
+
+.neovpn-theme .neovpn-auth-form__icon--lock::after {
+  left: 0.31rem;
+  top: 0.02rem;
+  width: 0.5rem;
+  height: 0.48rem;
+  border: 1.5px solid currentColor;
+  border-bottom: 0;
+  border-radius: 0.45rem 0.45rem 0 0;
+}
+
+.neovpn-theme .neovpn-auth-form__icon--peek {
+  right: 1.05rem;
+  width: 1.25rem;
+  height: 0.8rem;
+}
+
+.neovpn-theme .neovpn-auth-form__icon--peek::before {
+  inset: 0;
+  border: 1.5px solid currentColor;
+  border-radius: 100% / 85%;
+}
+
+.neovpn-theme .neovpn-auth-form__icon--peek::after {
+  top: 50%;
+  left: 50%;
+  width: 0.26rem;
+  height: 0.26rem;
+  background: currentColor;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.neovpn-theme .neovpn-auth-form__option {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: rgba(238, 242, 251, 0.92);
+  font-size: 0.92rem;
+  margin-top: 0.15rem;
+}
+
+.neovpn-theme .neovpn-auth-form__checkbox {
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid rgba(132, 147, 179, 0.44);
+  border-radius: 0.25rem;
+  background: rgba(12, 17, 29, 0.76);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.neovpn-theme .neovpn-auth-form__actions {
+  display: flex;
+  margin-top: 0.05rem;
+}
+
+.neovpn-theme .neovpn-auth-form__submit {
+  width: 100%;
+  min-height: 3.35rem;
+  border: 0;
+  border-radius: 0.78rem;
+  background: linear-gradient(90deg, #22cadc 0%, #4aa5f0 50%, #bf5adc 100%);
+  box-shadow: 0 8px 18px rgba(41, 82, 164, 0.12);
+  color: var(--neovpn-text-primary);
+  font-size: 0.96rem;
+  font-weight: 600;
+}
+
+.neovpn-theme .neovpn-auth-form__submit:hover {
+  background: linear-gradient(90deg, #28d0e1 0%, #57adf1 50%, #c967df 100%);
+  box-shadow: 0 10px 20px rgba(44, 86, 171, 0.14);
+  color: var(--neovpn-text-primary);
+}
+
+.neovpn-theme .neovpn-auth-error {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.35rem;
+  padding: 0.85rem 1rem;
+  border-color: rgba(255, 98, 113, 0.18);
+  background: rgba(17, 13, 22, 0.76);
+  color: var(--neovpn-state-danger-text);
+}
+
+.neovpn-theme .neovpn-auth-error__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.neovpn-theme .neovpn-auth-panel__footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+  gap: 0.95rem;
+  margin-top: 1.25rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.neovpn-theme .neovpn-auth-panel__meta-group {
+  display: grid;
+  gap: 0.28rem;
+  min-width: 0;
+}
+
+.neovpn-theme .neovpn-auth-panel__meta-group--host {
+  justify-items: end;
+}
+
+.neovpn-theme .neovpn-auth-panel__meta-label {
+  color: rgba(145, 154, 176, 0.72);
+  font-size: 0.68rem;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.neovpn-theme .neovpn-auth-panel__meta {
+  color: rgba(192, 200, 218, 0.84);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.neovpn-theme .neovpn-auth-panel__meta--host {
+  text-align: right;
+}
+
+body[data-page="admin-system-admin-password"] .cbi-value-field > div,
+body[data-page="admin-system-admin-password"] .cbi-value-field > .control-group {
+  max-width: 30rem;
+}
+
+/* Stage 6.2-R2.1 — Family B: compact configuration instances
+ * Audited page owners:
+ * - admin-system-leds: #cbi-system-led is a real cbi-section-table list.
+ * - admin-system-admin-dropbear: #view > .cbi-map > .cbi-section are repeatable
+ *   native instance sections, not tables and not Family A cards.
+ * - admin-network-dhcp: only the audited compact configuration sections listed
+ *   below are styled. Lease tables, tab shells, policy-like tables and any
+ *   DynamicList geometry remain outside Family B ownership.
+ *
+ * These selectors are intentionally page-owned or exact-section-owned so the
+ * styling can be removed without affecting Interfaces, Routing, Firewall or
+ * editable value lists.
+ */
+body[data-page="admin-system-leds"] #cbi-system-led,
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) {
+  border-radius: 1.1rem;
+  border: 1px solid rgba(72, 211, 228, 0.1);
+  background: var(--neovpn-surface-panel);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 12px 26px rgba(3, 6, 13, 0.18);
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-table,
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) > .cbi-section-table {
+  overflow: hidden;
+  border-radius: 0.98rem;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: var(--neovpn-surface-panel-raised);
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-titles,
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) .cbi-section-table-titles {
+  background: var(--neovpn-surface-panel-strong);
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led :is(.cbi-section-table-titles, .cbi-section-table-row) > .cbi-section-table-cell,
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-row > .cbi-value-field,
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) :is(.cbi-section-table-titles, .cbi-section-table-row) > .cbi-section-table-cell,
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) .cbi-section-table-row > .cbi-value-field {
+  padding: 0.82rem 0.9rem;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-titles > .cbi-section-table-cell,
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) .cbi-section-table-titles > .cbi-section-table-cell {
+  color: var(--neovpn-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.015em;
+  white-space: nowrap;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-row,
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) .cbi-section-table-row {
+  border-top: 1px solid rgba(72, 211, 228, 0.08);
+  transition: background-color 140ms ease;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-row:hover,
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) .cbi-section-table-row:hover {
+  background: rgba(72, 211, 228, 0.045);
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-row.placeholder,
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) .cbi-section-table-row.placeholder {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-row.placeholder > td,
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) .cbi-section-table-row.placeholder > td {
+  padding: 0.95rem 0.9rem;
+  color: var(--neovpn-text-secondary);
+  font-style: italic;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-actions,
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) .cbi-section-actions {
+  white-space: nowrap;
+  text-align: right;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-actions > :is(.cbi-button, .btn, .cbi-dropdown.btn),
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) .cbi-section-actions > :is(.cbi-button, .btn, .cbi-dropdown.btn) {
+  margin-inline-start: 0.32rem;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-create,
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) > .cbi-section-create {
+  margin-top: 0.3rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.98rem;
+  border: 1px dashed var(--neovpn-state-success-border);
+  background: rgba(7, 10, 18, 0.42);
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-create > .cbi-button-add,
+body[data-page="admin-network-dhcp"] :is(
+  #cbi-dhcp-host,
+  #cbi-dhcp-relay,
+  #cbi-dhcp-tag,
+  #cbi-dhcp-match,
+  #cbi-dhcp-vendorclass,
+  #cbi-dhcp-userclass,
+  #cbi-dhcp-boot,
+  #cbi-dhcp-pxe-service
+) > .cbi-section-create > .cbi-button-add {
+  min-width: 4.4rem;
+}
+
+body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section {
+  max-width: min(100%, 72rem);
+  padding: 1.05rem 1.35rem 1.15rem;
+  border: 1px solid rgba(72, 211, 228, 0.1);
+  border-radius: 1.15rem;
+  background:
+    var(--neovpn-surface-panel);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035),
+    0 12px 28px rgba(3, 6, 13, 0.16);
+}
+
+body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section > h3 {
+  margin-bottom: 0.25rem;
+  padding-right: 6.25rem;
+  font-size: 1.06rem;
+}
+
+body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section > .cbi-value {
+  padding-block: 0.82rem;
+  border-top: 1px solid rgba(72, 211, 228, 0.08);
+}
+
+body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section > .cbi-value:first-of-type {
+  border-top: 0;
+}
+
+body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section .cbi-value-title {
+  color: var(--neovpn-text-primary);
+  font-size: 0.97rem;
+}
+
+body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section .cbi-value-description {
+  margin-top: 0.28rem;
+  color: var(--neovpn-text-secondary);
+  font-size: 0.83rem;
+  line-height: 1.45;
+}
+
+body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section .cbi-value-field > :is(input[type="text"], input[type="password"], input[type="number"], select, .cbi-dropdown) {
+  max-width: 42rem;
+}
+
+body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section > .cbi-section-create {
+  margin-top: 0.55rem;
+  padding-top: 0.95rem;
+  border-top: 1px dashed var(--neovpn-state-success-border);
+}
+
+/* Stage 6.2 LED full-page composition
+ * Safe owner: body[data-page="admin-system-leds"] #cbi-system-led
+ * Source pages used as visual truth: Core Settings, Overview, Firewall main.
+ * The page keeps real table semantics and composes as one main work surface:
+ * map shell -> compact LED table -> compact local add footer.
+ */
+body[data-page="admin-system-leds"] #view {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+}
+
+body[data-page="admin-system-leds"] #view > :is(.cbi-map, .cbi-page-actions) {
+  width: min(100%, 76rem);
+  max-width: min(100%, 76rem);
+  margin: 0;
+  justify-self: start;
+}
+
+body[data-page="admin-system-leds"] #view > .cbi-map {
+  padding: 1.5rem;
+  border-color: rgba(72, 211, 228, 0.1);
+  border-radius: calc(var(--neovpn-radius-panel-lg) + 0.0625rem);
+  background:
+    radial-gradient(circle at top right, rgba(72, 211, 228, 0.08), transparent 28%),
+    var(--neovpn-surface-panel);
+}
+
+body[data-page="admin-system-leds"] #view > .cbi-map > h2 {
+  margin: 0 0 0.4rem;
+  color: var(--neovpn-text-primary);
+  font-size: clamp(1.75rem, 2vw, 2.05rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+body[data-page="admin-system-leds"] #view > .cbi-map > .cbi-map-descr {
+  max-width: 58rem;
+  margin: 0 0 0.85rem;
+  color: var(--neovpn-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-table,
+body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-create {
+  margin: 0;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-table {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--neovpn-border-subtle);
+  border-bottom: 0;
+  border-radius: var(--neovpn-radius-panel) var(--neovpn-radius-panel) 0 0;
+  background: var(--neovpn-surface-panel-raised);
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-table::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 167px;
+  height: calc(2.95rem + 1px);
+  border-top-right-radius: inherit;
+  background: var(--neovpn-surface-panel-strong);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Status Routing full-page pass
+ * Safe owner: body[data-page="admin-status-routes"]
+ * Live DOM contract:
+ * - #view > h2 + p + .cbi-tabmenu + one direct div wrapper
+ * - wrapper contains .cbi-section[data-tab][data-tab-title] panels
+ * - each panel contains h3 + .table groups for neighbours, routes and rules
+ * Tabs already function correctly via page-owned compatibility rules; this
+ * block styles composition only and does not alter tab visibility mechanics.
+ */
+body[data-page="admin-status-routes"] #view {
+  display: grid;
+  gap: 0;
+  align-items: start;
+  position: relative;
+  padding-top: 1rem;
+}
+
+body[data-page="admin-status-routes"] #view::before {
+  content: "";
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  width: min(100%, 76rem);
+  height: calc(100% - 1rem);
+  border: 1px solid rgba(72, 211, 228, 0.1);
+  border-radius: calc(var(--neovpn-radius-panel-lg) + 0.0625rem);
+  background:
+    radial-gradient(circle at top right, rgba(72, 211, 228, 0.08), transparent 28%),
+    var(--neovpn-surface-panel);
+  box-shadow: var(--neo-shadow-panel);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body[data-page="admin-status-routes"] #view > :is(h2, p, .cbi-tabmenu, div) {
+  width: min(100%, 76rem);
+  max-width: min(100%, 76rem);
+  margin: 0;
+  justify-self: start;
+  position: relative;
+  z-index: 1;
+}
+
+body[data-page="admin-status-routes"] #view > h2 {
+  padding: 1.5rem 1rem 0;
+  color: var(--neovpn-text-primary);
+  font-size: clamp(1.78rem, 2vw, 2.08rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+body[data-page="admin-status-routes"] #view > p {
+  max-width: 58rem;
+  padding: 0.7rem 1rem 0;
+  color: var(--neovpn-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.58;
+}
+
+body[data-page="admin-status-routes"] #view > .cbi-tabmenu {
+  gap: var(--neovpn-space-2);
+  margin-bottom: 0;
+  padding: 1rem 1rem 0.125rem;
+}
+
+body[data-page="admin-status-routes"] #view > .cbi-tabmenu > li {
+  margin: 0;
+}
+
+body[data-page="admin-status-routes"] #view > .cbi-tabmenu > li > a {
+  min-height: 2.35rem;
+  padding: 0.58rem 0.88rem;
+  border-radius: 0.82rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+body[data-page="admin-status-routes"] #view > .cbi-tabmenu > .cbi-tab > a {
+  border-color: var(--neovpn-tab-border-active);
+  background: var(--neovpn-tab-bg-active);
+  box-shadow: var(--neovpn-control-highlight);
+  color: var(--neovpn-text-primary);
+}
+
+body[data-page="admin-status-routes"] #view > .cbi-tabmenu > .cbi-tab-disabled > a {
+  color: var(--neovpn-text-muted);
+}
+
+body[data-page="admin-status-routes"] #view > div {
+  margin-top: 0;
+  padding: 1rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] {
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--neovpn-border-subtle);
+  border-radius: var(--neovpn-radius-panel);
+  background: var(--neovpn-surface-panel-raised);
+  box-shadow: none;
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > h3 {
+  margin: 0 0 0.9rem;
+  color: var(--neovpn-text-primary);
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > h3:not(:first-child) {
+  margin-top: 0.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--neovpn-border-subtle);
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table {
+  width: 100%;
+  margin: 0 0 0.75rem;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table:last-child {
+  margin-bottom: 0;
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table > .table-titles {
+  background: var(--neovpn-surface-panel-strong);
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table > .table-titles > .th {
+  padding: 0.78rem 0.95rem;
+  color: rgba(224, 231, 242, 0.9);
+  font-size: 0.79rem;
+  font-weight: 700;
+  letter-spacing: 0.012em;
+  white-space: nowrap;
+  background: transparent;
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table > .tr:not(.table-titles) {
+  transition: background-color 140ms ease;
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table > .tr:not(.table-titles):hover {
+  background: rgba(103, 201, 221, 0.04);
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table > .tr + .tr {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table > .tr > .td {
+  padding: 0.78rem 0.95rem;
+  color: rgba(236, 241, 249, 0.93);
+  font-size: 0.95rem;
+  line-height: 1.42;
+  vertical-align: middle;
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table > .tr > .td:is([data-title="IP address"], [data-title="Target"], [data-title="Gateway"], [data-title="Source"], [data-title="Rule"]) {
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table > .tr > .td .ifacebadge {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(232, 239, 249, 0.9);
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table .placeholder > .td {
+  padding: 0.95rem;
+  color: rgba(192, 200, 214, 0.85);
+  font-style: italic;
+}
+
+/* Status log pages
+ * Safe owners:
+ * - admin-status-logs-syslog
+ * - admin-status-logs-dmesg
+ *
+ * The live log pages render as #view > h2 + #content_syslog. Keep the LuCI
+ * controls and polling textarea intact, but compose them as the same single
+ * System-style page surface used by the approved Core Settings page.
+ */
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) .neovpn-content__inner {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+  width: min(100%, 76rem);
+  max-width: min(100%, 76rem);
+  margin: 0;
+  padding: 1.5rem;
+  border: 1px solid rgba(103, 201, 221, 0.1);
+  border-radius: calc(var(--neovpn-radius-panel-lg) + 0.0625rem);
+  background:
+    radial-gradient(circle at top right, rgba(86, 203, 208, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(17, 22, 31, 0.98) 0%, rgba(13, 17, 25, 0.98) 100%);
+  box-shadow: 0 18px 34px rgba(3, 6, 12, 0.2);
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #tabmenu {
+  order: 2;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #tabmenu > .tabs {
+  margin: 0;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #view {
+  display: contents;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #view > h2 {
+  order: 1;
+  margin: 0;
+  color: var(--neovpn-text-primary);
+  font-size: clamp(1.78rem, 2vw, 2.08rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog {
+  order: 3;
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(24, 30, 42, 0.98) 0%, rgba(18, 23, 33, 0.98) 100%);
+  box-shadow: none;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog > .cbi-section-descr:empty {
+  display: none;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog > div:not(.cbi-section-descr) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem 0.75rem;
+  min-width: 0;
+  margin: 0;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog label {
+  margin: 0;
+  color: rgba(220, 228, 241, 0.82);
+  font-size: 0.86rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog :is(input[type="text"], input[type="number"], select) {
+  width: auto;
+  max-width: min(100%, 18rem);
+  min-height: 2.35rem;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog input[type="checkbox"] {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog :is(#scrollDownButton, #scrollUpButton) {
+  min-height: 2.35rem;
+  padding-inline: 0.88rem;
+  border-radius: 0.82rem;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog textarea#syslog,
+body[data-page="admin-status-logs-dmesg"] #content_syslog textarea#dmesg {
+  width: 100%;
+  min-height: 24rem;
+  height: clamp(24rem, 56vh, 46rem);
+  max-height: 72vh;
+  margin: 0;
+  padding: 0.9rem 1rem;
+  border-color: rgba(122, 136, 168, 0.24);
+  border-radius: 0.9rem;
+  background: rgba(8, 11, 18, 0.72);
+  color: rgba(220, 228, 241, 0.86);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  white-space: pre;
+  resize: vertical;
+}
+
+/* Status Processes
+ * Safe owner: admin-status-processes
+ *
+ * Live DOM: #view > h2 + .cbi-map-descr + table.table. This is a dense
+ * operational data page, so the System-style frame owns page composition while
+ * the native LuCI table remains intact for scanning many process rows.
+ */
+body[data-page="admin-status-processes"] #tabmenu {
+  display: none;
+}
+
+body[data-page="admin-status-processes"] #view {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 1.5rem;
+  border: 1px solid rgba(103, 201, 221, 0.1);
+  border-radius: calc(var(--neovpn-radius-panel-lg) + 0.0625rem);
+  background:
+    radial-gradient(circle at top right, rgba(86, 203, 208, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(17, 22, 31, 0.98) 0%, rgba(13, 17, 25, 0.98) 100%);
+  box-shadow: 0 18px 34px rgba(3, 6, 12, 0.2);
+}
+
+body[data-page="admin-status-processes"] #view > h2 {
+  margin: 0;
+  color: var(--neovpn-text-primary);
+  font-size: clamp(1.78rem, 2vw, 2.08rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+body[data-page="admin-status-processes"] #view > .cbi-map-descr {
+  max-width: 58rem;
+  margin: -0.25rem 0 0;
+  color: var(--neovpn-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.58;
+}
+
+body[data-page="admin-status-processes"] #view > .table {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(24, 30, 42, 0.98) 0%, rgba(18, 23, 33, 0.98) 100%);
+  box-shadow: none;
+}
+
+body[data-page="admin-status-processes"] #view > .table > .table-titles {
+  background: linear-gradient(180deg, rgba(39, 44, 56, 0.96) 0%, rgba(33, 38, 50, 0.96) 100%);
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(th, td, .th, .td) {
+  padding: 0.62rem 0.78rem;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  vertical-align: middle;
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(th, .th) {
+  color: rgba(224, 231, 242, 0.9);
+  font-weight: 700;
+  letter-spacing: 0.012em;
+  white-space: nowrap;
+  background: transparent;
+}
+
+body[data-page="admin-status-processes"] #view > .table .tr:not(.table-titles) {
+  transition: background-color 140ms ease;
+}
+
+body[data-page="admin-status-processes"] #view > .table .tr:not(.table-titles):hover {
+  background: rgba(103, 201, 221, 0.04);
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(td, .td):nth-child(1),
+body[data-page="admin-status-processes"] #view > .table :is(td, .td):nth-child(4),
+body[data-page="admin-status-processes"] #view > .table :is(td, .td):nth-child(5) {
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+  color: rgba(232, 239, 249, 0.9);
+  white-space: nowrap;
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(td, .td):nth-child(3) {
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+  color: rgba(236, 241, 249, 0.93);
+  overflow-wrap: anywhere;
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(th:last-child, td:last-child, .th:last-child, .td:last-child) {
+  text-align: right;
+  white-space: nowrap;
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(td, .td):last-child {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(td, .td):last-child .btn {
+  min-height: 1.95rem;
+  height: 1.95rem;
+  padding-inline: 0.58rem;
+  border-radius: 0.68rem;
+  font-size: 0.76rem;
+  line-height: 1.15;
+}
+
+/* Network Firewall
+ * Safe owner: all firewall pages expose data-page="admin-network-firewall...".
+ *
+ * Keep LuCI's firewall forms, tab links and save handlers intact while giving
+ * the page the same single-surface hierarchy as the approved System pages:
+ * title, description, tabs, content, actions.
+ */
+body[data-page^="admin-network-firewall"] .neovpn-content__inner {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 1.5rem;
+  border: 1px solid rgba(103, 201, 221, 0.1);
+  border-radius: calc(var(--neovpn-radius-panel-lg) + 0.0625rem);
+  background:
+    radial-gradient(circle at top right, rgba(86, 203, 208, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(17, 22, 31, 0.98) 0%, rgba(13, 17, 25, 0.98) 100%);
+  box-shadow: 0 18px 34px rgba(3, 6, 12, 0.2);
+}
+
+body[data-page^="admin-network-firewall"] #tabmenu {
+  order: 3;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+body[data-page^="admin-network-firewall"] #tabmenu > .tabs {
+  margin: 0;
+}
+
+body[data-page^="admin-network-firewall"] #view,
+body[data-page^="admin-network-firewall"] #view > .cbi-map {
+  display: contents;
+}
+
+body[data-page^="admin-network-firewall"] #view > .cbi-map > h2 {
+  order: 1;
+  margin: 0;
+  color: var(--neovpn-text-primary);
+  font-size: clamp(1.78rem, 2vw, 2.08rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+body[data-page^="admin-network-firewall"] #view > .cbi-map > .cbi-map-descr {
+  order: 2;
+  max-width: 62rem;
+  margin: -0.25rem 0 0;
+  color: var(--neovpn-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.58;
+}
+
+body[data-page^="admin-network-firewall"] #view > .cbi-map > .cbi-section {
+  order: 4;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  padding: 1.05rem;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(24, 30, 42, 0.98) 0%, rgba(18, 23, 33, 0.98) 100%);
+  box-shadow: none;
+}
+
+body[data-page^="admin-network-firewall"] #view > .cbi-map > .cbi-section > h3 {
+  margin: 0 0 0.85rem;
+  color: var(--neovpn-text-primary);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+body[data-page^="admin-network-firewall"] #view > .cbi-map > .cbi-section + .cbi-section {
+  margin-top: 0;
+}
+
+body[data-page^="admin-network-firewall"] #view > .cbi-map .cbi-value {
+  min-height: 0;
+  padding-block: 0.72rem;
+  border-color: rgba(255, 255, 255, 0.055);
+}
+
+body[data-page^="admin-network-firewall"] #view > .cbi-map .cbi-section-table {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(20, 25, 36, 0.96) 0%, rgba(16, 21, 31, 0.96) 100%);
+  box-shadow: none;
+}
+
+body[data-page^="admin-network-firewall"] #view > .cbi-map .cbi-section-table :is(th, td, .th, .td, .cbi-section-table-cell, .cbi-value-field) {
+  padding: 0.64rem 0.78rem;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  vertical-align: middle;
+}
+
+body[data-page^="admin-network-firewall"] #view > .cbi-map .cbi-section-table :is(th, .th, .cbi-section-table-titles > .cbi-section-table-cell) {
+  color: rgba(224, 231, 242, 0.9);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: linear-gradient(180deg, rgba(39, 44, 56, 0.96) 0%, rgba(33, 38, 50, 0.96) 100%);
+}
+
+body[data-page^="admin-network-firewall"] #view > .cbi-map .cbi-section-table-row:hover,
+body[data-page^="admin-network-firewall"] #view > .cbi-map .cbi-section-table tr:not(.cbi-section-table-titles):hover {
+  background: rgba(103, 201, 221, 0.04);
+}
+
+body[data-page^="admin-network-firewall"] #view > .cbi-page-actions {
+  order: 5;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-titles {
+  background: linear-gradient(180deg, rgba(39, 44, 56, 0.96) 0%, rgba(33, 38, 50, 0.96) 100%);
+  height: 2.95rem;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-titles > .cbi-section-table-cell {
+  padding: 0.86rem 0.95rem;
+  color: rgba(226, 233, 244, 0.92);
+  font-size: 0.81rem;
+  font-weight: 700;
+  letter-spacing: 0.012em;
+  vertical-align: middle;
+  white-space: nowrap;
+  background: transparent;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-titles > .cbi-section-actions {
+  padding: 0.86rem 0.95rem;
+  vertical-align: middle;
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+  background: transparent;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-titles > .cbi-section-actions::before {
+  display: none;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-row {
+  background: transparent;
+  transition: background-color 140ms ease;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-row + .cbi-section-table-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-row:hover {
+  background: rgba(103, 201, 221, 0.04);
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-row > :is(.cbi-section-table-cell, .cbi-value-field) {
+  padding: 0.9rem 0.95rem;
+  vertical-align: middle;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-row > .cbi-value-field:nth-child(2) {
+  color: rgba(244, 248, 255, 0.96);
+  font-weight: 600;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-row > .cbi-value-field:nth-child(n + 3) {
+  color: rgba(196, 205, 220, 0.9);
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-actions {
+  padding-right: 0.95rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led :is(th, td, .th, .td).cbi-section-actions {
+  width: 11.5rem !important;
+  min-width: 11.5rem !important;
+  white-space: nowrap;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-actions > div {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.34rem;
+  white-space: nowrap;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-actions > div > :is(.cbi-button, .btn, .cbi-dropdown.btn) {
+  flex: 0 0 auto;
+  min-height: 2rem;
+  margin: 0;
+  padding-inline: 0.72rem;
+  border-radius: 0.72rem;
+  font-size: 0.82rem;
+  line-height: 1.15;
+  box-shadow: none;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-actions > div > .drag-handle {
+  flex: 0 0 2rem;
+  width: 2rem;
+  min-width: 2rem;
+  padding-inline: 0;
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(231, 238, 248, 0.88);
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-actions > div > .cbi-button-edit {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(235, 241, 250, 0.94);
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-actions > .cbi-button-remove,
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-actions > .btn.cbi-button-remove,
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-actions > div > .cbi-button-remove {
+  border-color: rgba(216, 111, 130, 0.22);
+  background: rgba(216, 111, 130, 0.06);
+  color: rgba(244, 224, 230, 0.92);
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-create {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 0;
+  padding: 0.7rem 0.95rem 0.78rem;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-top: 1px solid rgba(103, 201, 221, 0.12);
+  border-radius: 0 0 var(--neovpn-radius-panel) var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(13, 18, 27, 0.82) 0%, rgba(12, 17, 25, 0.92) 100%);
+  box-shadow: none;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-create::before {
+  display: none;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-create > .cbi-button-add {
+  min-width: 0;
+  min-height: 2.35rem;
+  padding-inline: 0.9rem;
+  border-radius: 0.78rem;
+  font-size: 0.9rem;
+}
+
+/* Affected page: admin-system-system
+ * Stable field scope: the Time Synchronization tab exposes a single
+ * .cbi-value[data-widget="CBI.DynamicList"][data-name="server"] editor for
+ * upstream NTP candidates. The outer Core Settings row keeps the label and
+ * description grid; only the DynamicList root owns repeated-item layout.
+ */
+body[data-page="admin-system-system"] #view .cbi-section-node-tabbed > [data-tab="timesync"] .cbi-value[data-widget="CBI.DynamicList"][data-name="server"] .cbi-dynlist > .item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  background: linear-gradient(180deg, rgba(29, 35, 49, 0.98) 0%, rgba(22, 27, 38, 0.98) 100%);
+  color: rgba(241, 246, 255, 0.94);
+  font-size: 0.875rem;
+  line-height: 1.35;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+body[data-page="admin-system-system"] #view .cbi-section-node-tabbed > [data-tab="timesync"] .cbi-value[data-widget="CBI.DynamicList"][data-name="server"] .cbi-dynlist > .item > span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+body[data-page="admin-system-system"] #view .cbi-section-node-tabbed > [data-tab="timesync"] .cbi-value[data-widget="CBI.DynamicList"][data-name="server"] .cbi-dynlist > .item > .remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.7rem;
+  background: rgba(223, 91, 114, 0.08);
+  color: rgba(255, 235, 240, 0.92);
+}
+
+body[data-page="admin-system-system"] #view .cbi-section-node-tabbed > [data-tab="timesync"] .cbi-value[data-widget="CBI.DynamicList"][data-name="server"] .cbi-value-description {
+  width: min(100%, 42rem);
+  max-width: 100%;
+  margin-top: 0.7rem;
+}
+
+/* Status Realtime Graphs
+ * Safe owners:
+ * - admin-status-realtime-load
+ * - admin-status-realtime-bandwidth
+ * - admin-status-realtime-connections
+ *
+ * The live graph pages do not expose a page-level heading. Add one as a visual
+ * page signature while preserving the native graph headings, SVG updates and
+ * tab navigation.
+ */
+body[data-page^="admin-status-realtime"] .neovpn-content__inner {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 1.5rem;
+  border: 1px solid rgba(103, 201, 221, 0.1);
+  border-radius: calc(var(--neovpn-radius-panel-lg) + 0.0625rem);
+  background:
+    radial-gradient(circle at top right, rgba(86, 203, 208, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(17, 22, 31, 0.98) 0%, rgba(13, 17, 25, 0.98) 100%);
+  box-shadow: 0 18px 34px rgba(3, 6, 12, 0.2);
+}
+
+body[data-page^="admin-status-realtime"] .neovpn-content__inner::before {
+  order: 1;
+  content: "Realtime Graphs";
+  color: var(--neovpn-text-primary);
+  font-size: clamp(1.78rem, 2vw, 2.08rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+body[data-page^="admin-status-realtime"] .neovpn-content__inner::after {
+  order: 2;
+  max-width: 62rem;
+  margin-top: -0.25rem;
+  content: "Live router activity, traffic and connection metrics.";
+  color: var(--neovpn-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.58;
+}
+
+body[data-page^="admin-status-realtime"] #tabmenu {
+  order: 3;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+body[data-page^="admin-status-realtime"] #tabmenu > .tabs {
+  margin: 0;
+}
+
+body[data-page^="admin-status-realtime"] #view {
+  order: 4;
+  display: grid;
+  gap: 0.9rem;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 1.05rem;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(24, 30, 42, 0.98) 0%, rgba(18, 23, 33, 0.98) 100%);
+  box-shadow: none;
+}
+
+body[data-page^="admin-status-realtime"] #view > .cbi-map {
+  display: grid;
+  gap: 0.9rem;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body[data-page^="admin-status-realtime"] #view :is(h2, .cbi-map > h2) {
+  margin: 0;
+  color: var(--neovpn-text-primary);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+body[data-page^="admin-status-realtime"] #view :is(.cbi-map-descr, .cbi-map > .cbi-map-descr) {
+  max-width: 62rem;
+  margin: -0.25rem 0 0;
+  color: var(--neovpn-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+body[data-page^="admin-status-realtime"] #view svg {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  min-height: 18rem;
+  border: 1px solid rgba(122, 136, 168, 0.16);
+  border-radius: 0.95rem;
+  background: rgba(8, 11, 18, 0.52);
+}
+
+body[data-page^="admin-status-realtime"] #view .table,
+body[data-page^="admin-status-realtime"] #view table {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: 0.9rem;
+  background: linear-gradient(180deg, rgba(20, 25, 36, 0.96) 0%, rgba(16, 21, 31, 0.96) 100%);
+  box-shadow: none;
+}
+
+body[data-page^="admin-status-realtime"] #view :is(th, td, .th, .td) {
+  padding: 0.62rem 0.78rem;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  vertical-align: middle;
+}
+
+body[data-page^="admin-status-realtime"] #view :is(th, .th) {
+  color: rgba(224, 231, 242, 0.9);
+  font-weight: 700;
+  background: linear-gradient(180deg, rgba(39, 44, 56, 0.96) 0%, rgba(33, 38, 50, 0.96) 100%);
+}
+
+/* System Startup
+ * Safe owner: admin-system-startup.
+ *
+ * The page renders its own in-page tab strip for Initscripts / Local Startup.
+ * Preserve all init action forms and textarea submission while composing the
+ * page as the same single-surface system used across NeoVPN.
+ */
+body[data-page="admin-system-startup"] #tabmenu {
+  display: none;
+}
+
+body[data-page="admin-system-startup"] #view {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 1.5rem;
+  border: 1px solid rgba(103, 201, 221, 0.1);
+  border-radius: calc(var(--neovpn-radius-panel-lg) + 0.0625rem);
+  background:
+    radial-gradient(circle at top right, rgba(86, 203, 208, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(17, 22, 31, 0.98) 0%, rgba(13, 17, 25, 0.98) 100%);
+  box-shadow: 0 18px 34px rgba(3, 6, 12, 0.2);
+}
+
+body[data-page="admin-system-startup"] #view > div {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+body[data-page="admin-system-startup"] #view > div > h2 {
+  margin: 0;
+  color: var(--neovpn-text-primary);
+  font-size: clamp(1.78rem, 2vw, 2.08rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+body[data-page="admin-system-startup"] #view > div > .cbi-tabmenu {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+body[data-page="admin-system-startup"] #view > div > div > [data-tab][data-tab-title],
+body[data-page="admin-system-startup"] #view > div > div > div > [data-tab][data-tab-title] {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 1.05rem;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(24, 30, 42, 0.98) 0%, rgba(18, 23, 33, 0.98) 100%);
+  box-shadow: none;
+}
+
+body[data-page="admin-system-startup"] #view > div > div > [data-tab][data-tab-title] > :first-child,
+body[data-page="admin-system-startup"] #view > div > div > div > [data-tab][data-tab-title] > :first-child {
+  margin-top: 0;
+}
+
+body[data-page="admin-system-startup"] #view > div > div > [data-tab][data-tab-title] .alert-message,
+body[data-page="admin-system-startup"] #view > div > div > div > [data-tab][data-tab-title] .alert-message {
+  margin: 0.8rem 0 1rem;
+}
+
+body[data-page="admin-system-startup"] #view table.table {
+  width: 100%;
+  margin: 1rem 0 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(20, 25, 36, 0.96) 0%, rgba(16, 21, 31, 0.96) 100%);
+  box-shadow: none;
+}
+
+body[data-page="admin-system-startup"] #view table.table :is(th, td, .th, .td) {
+  padding: 0.58rem 0.72rem;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  vertical-align: middle;
+}
+
+body[data-page="admin-system-startup"] #view table.table :is(th, .th) {
+  color: rgba(224, 231, 242, 0.9);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: linear-gradient(180deg, rgba(39, 44, 56, 0.96) 0%, rgba(33, 38, 50, 0.96) 100%);
+}
+
+body[data-page="admin-system-startup"] #view table.table :is(td, .td):nth-child(1) {
+  width: 7.5rem;
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+  color: rgba(232, 239, 249, 0.9);
+  white-space: nowrap;
+}
+
+body[data-page="admin-system-startup"] #view table.table :is(td, .td):nth-child(2) {
+  font-weight: 650;
+  color: rgba(236, 241, 249, 0.94);
+}
+
+body[data-page="admin-system-startup"] #view table.table :is(th, td, .th, .td):last-child {
+  width: 25rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+body[data-page="admin-system-startup"] #view table.table :is(th, .th).cbi-section-actions {
+  display: table-cell;
+}
+
+body[data-page="admin-system-startup"] #view table.table :is(td, .td):last-child {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.32rem;
+}
+
+body[data-page="admin-system-startup"] #view table.table :is(td, .td):last-child .btn {
+  min-height: 1.9rem;
+  height: 1.9rem;
+  padding-inline: 0.54rem;
+  border-radius: 0.66rem;
+  font-size: 0.74rem;
+  line-height: 1.15;
+}
+
+body[data-page="admin-system-startup"] #view textarea {
+  width: 100%;
+  min-height: 20rem;
+  margin: 0.9rem 0 0;
+  padding: 0.9rem 1rem;
+  border-color: rgba(122, 136, 168, 0.24);
+  border-radius: 0.9rem;
+  background: rgba(8, 11, 18, 0.72);
+  color: rgba(220, 228, 241, 0.88);
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  line-height: 1.48;
+  resize: vertical;
+}
+
+body[data-page="admin-system-startup"] #view .cbi-page-actions {
+  width: 100%;
+  max-width: 100%;
+  margin: 1rem 0 0;
+}
+
+/* Affected page: admin-system-attendedsysupgrade-configuration
+ * Stable field scope: the Rebuilders editor is the single
+ * #cbi-attendedsysupgrade-server-rebuilder DynamicList on the Configuration
+ * page. Keep the LuCI field row intact and restore a coherent add row with
+ * input + action on one line.
+ */
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server-rebuilder .cbi-dynlist > .item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  background: linear-gradient(180deg, rgba(29, 35, 49, 0.98) 0%, rgba(22, 27, 38, 0.98) 100%);
+  color: rgba(241, 246, 255, 0.94);
+  font-size: 0.875rem;
+  line-height: 1.35;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server-rebuilder .cbi-dynlist > .item > span {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server-rebuilder .cbi-dynlist > .item > .remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.7rem;
+  background: rgba(223, 91, 114, 0.08);
+  color: rgba(255, 235, 240, 0.92);
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server-rebuilder .cbi-value-description {
+  width: min(100%, 42rem);
+  max-width: 100%;
+  margin-top: 0.7rem;
+}
+
+/* Stage 20260726 system contract pass
+ * Page-specific composition only. Global control, button, table and split
+ * button geometry is owned by tokens/components/compatibility.
+ */
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) .neovpn-content__inner,
+body[data-page="admin-status-routes"] #view,
+body:is([data-page="admin-system-admin-dropbear"], [data-page="admin-system-admin-sshkeys"], [data-page="admin-system-admin-uhttpd"]) #view,
+body[data-page="admin-system-package-manager"] #view,
+body:is([data-page="admin-network"], [data-page="admin-network-devices"]) #view {
+  gap: var(--neo-page-gap);
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) .neovpn-content__inner {
+  padding: var(--neo-panel-padding);
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #view > h2,
+body[data-page="admin-status-routes"] #view > h2,
+body:is([data-page="admin-system-admin-dropbear"], [data-page="admin-system-admin-sshkeys"], [data-page="admin-system-admin-uhttpd"]) #view > .cbi-map > h2,
+body[data-page="admin-system-package-manager"] #view > h2,
+body:is([data-page="admin-network"], [data-page="admin-network-devices"]) #view > .cbi-map > h2 {
+  font-size: clamp(1.75rem, 1.9vw, 2rem);
+  line-height: 1.08;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog {
+  gap: 0.625rem;
+  padding: var(--neo-panel-padding-compact);
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog > div:not(.cbi-section-descr) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.625rem 0.75rem;
+  min-height: 0;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog :is(input[type="text"], input[type="number"], select),
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog :is(#scrollDownButton, #scrollUpButton) {
+  min-height: var(--neovpn-control-height);
+  height: var(--neovpn-control-height);
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog > div:not(.cbi-section-descr) > label {
+  width: auto;
+  min-width: 0;
+  margin: 0;
+  white-space: nowrap;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog > div:not(.cbi-section-descr) > input[type="checkbox"] {
+  flex: 0 0 auto;
+  margin-inline: -0.25rem 0.25rem;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog > div:not(.cbi-section-descr) > :is(select, input[type="text"]) {
+  width: min(100%, var(--neo-field-md));
+  flex: 0 1 var(--neo-field-md);
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog > div:not(.cbi-section-descr) > input[type="number"] {
+  width: min(100%, var(--neo-field-sm));
+  flex: 0 1 var(--neo-field-sm);
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog :is(#scrollDownButton, #scrollUpButton) {
+  width: auto;
+  flex: 0 0 auto;
+  padding-inline: 0.875rem;
+}
+
+body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog textarea#syslog,
+body[data-page="admin-status-logs-dmesg"] #content_syslog textarea#dmesg {
+  min-height: 18rem;
+  height: clamp(18rem, 48vh, 38rem);
+  padding: 0.75rem 0.85rem;
+}
+
+body[data-page="admin-status-routes"] #view {
+  gap: 0;
+  padding-top: 0;
+}
+
+body[data-page="admin-status-routes"] #view > h2 {
+  margin-bottom: 0.625rem;
+  padding-top: 0;
+}
+
+body[data-page="admin-status-routes"] #view > p:first-of-type,
+body[data-page="admin-status-routes"] #view > .cbi-tabmenu {
+  padding-top: 0;
+}
+
+body[data-page="admin-status-routes"] #view > p:first-of-type {
+  margin-bottom: 1.25rem;
+}
+
+body[data-page="admin-status-routes"] #view > .cbi-tabmenu {
+  margin-bottom: 1.125rem;
+}
+
+body[data-page="admin-status-routes"] #view > div {
+  padding: 1.5rem var(--neo-panel-padding) var(--neo-panel-padding);
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] {
+  gap: 0.75rem;
+  padding: var(--neo-panel-padding-compact);
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > h3 {
+  margin-bottom: 0.5rem;
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table > .tr > .td {
+  padding: var(--neo-table-cell-padding-y) var(--neo-table-cell-padding-x);
+  font-size: 0.875rem;
+}
+
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table .placeholder > .td {
+  padding: 0.7rem;
+}
+
+body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section {
+  padding: var(--neo-panel-padding-compact) var(--neo-panel-padding);
+}
+
+body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section > .cbi-value {
+  grid-template-columns: minmax(13.75rem, 16rem) minmax(0, 1fr);
+  padding-block: var(--neo-form-row-padding-y);
+}
+
+body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section .cbi-value-description {
+  margin-top: 0.25rem;
+}
+
+body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section .cbi-value-field > :is(input[type="text"], input[type="password"], select, .cbi-dropdown) {
+  width: min(100%, var(--neo-field-md));
+}
+
+body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section .cbi-value-field > input[type="number"] {
+  width: min(100%, var(--neo-field-sm));
+}
+
+body[data-page="admin-system-admin-sshkeys"] #view > .cbi-map,
+body[data-page="admin-system-admin-uhttpd"] #view > .cbi-map {
+  padding: var(--neo-panel-padding);
+}
+
+body[data-page="admin-system-admin-uhttpd"] #view > .cbi-map > .cbi-section {
+  padding: var(--neo-panel-padding-compact) var(--neo-panel-padding);
+}
+
+body[data-page="admin-system-admin-uhttpd"] .cbi-value {
+  padding-block: var(--neo-form-row-padding-y);
+}
+
+body[data-page="admin-system-admin-sshkeys"] #view .cbi-section-node,
+body[data-page="admin-system-admin-sshkeys"] #view .cbi-value-fieldset {
+  display: grid;
+  gap: 0.65rem;
+  padding: var(--neo-panel-padding-compact);
+}
+
+body[data-page="admin-system-admin-sshkeys"] #view :is(.cbi-empty, .alert-message, .notice) {
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+}
+
+body[data-page="admin-system-admin-sshkeys"] #view :is(.control-group, .cbi-value-field, .cbi-section-create) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+body[data-page="admin-system-admin-sshkeys"] #view :is(input[type="text"], input[type="file"], textarea) {
+  flex: 1 1 24rem;
+  width: auto;
+  min-width: 0;
+}
+
+body[data-page="admin-system-package-manager"] #view {
+  --neovpn-software-control-height: var(--neovpn-control-height);
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls {
+  gap: 0.75rem 1rem;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls input[type="text"],
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .btn,
+body[data-page="admin-system-package-manager"] #view > .cbi-tabmenu.mode > li > a,
+body[data-page="admin-system-package-manager"] #view > .controls > .pager.center {
+  align-items: center;
+  min-height: var(--neovpn-control-height);
+  height: auto;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls input[type="text"],
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .btn,
+body[data-page="admin-system-package-manager"] #view > .cbi-tabmenu.mode > li > a {
+  display: inline-flex;
+  padding: 0 var(--neovpn-control-padding-x);
+}
+
+body[data-page="admin-system-package-manager"] #view > .controls > .pager.center {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr) 2.25rem;
+  gap: 0.65rem;
+  padding: 0.55rem 0.65rem;
+}
+
+body[data-page="admin-system-package-manager"] #view > .controls > .pager.center > .text {
+  min-width: 0;
+  text-align: center;
+  color: var(--neovpn-text-secondary);
+}
+
+body[data-page="admin-system-package-manager"] #view > .controls > .pager.center > .btn {
+  width: var(--neovpn-control-height);
+  min-width: var(--neovpn-control-height);
+  height: var(--neovpn-control-height);
+  min-height: var(--neovpn-control-height);
+  padding: 0;
+  justify-content: center;
+}
+
+body[data-page="admin-system-package-manager"] #view > .controls > .pager.center > .prev {
+  justify-self: start;
+}
+
+body[data-page="admin-system-package-manager"] #view > .controls > .pager.center > .next {
+  justify-self: end;
+}
+
+body:is([data-page="admin-network"], [data-page="admin-network-devices"]) #view .cbi-section-table-row,
+body:is([data-page="admin-network"], [data-page="admin-network-devices"]) #view .table > .tr:not(.table-titles) {
+  width: 100%;
+}
+
+body[data-page="admin-network-network"] #cbi-network-interface :is(td, .td).cbi-section-actions {
+  width: 15.75rem;
+  min-width: 15.75rem;
+  white-space: nowrap;
+}
+
+body[data-page="admin-network-network"] #cbi-network-interface :is(td, .td).cbi-section-actions > :is(div, span, form),
+body[data-page="admin-network-network"] #cbi-network-interface :is(td, .td):last-child > :is(div, span, form) {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+body[data-page="admin-network-network"] #cbi-network-interface :is(td, .td).cbi-section-actions :is(.btn, .cbi-button, button) {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+body:is([data-page="admin-network"], [data-page="admin-network-devices"]) #view .cbi-section-create {
+  margin-top: 0.5rem;
+  padding: var(--neo-panel-padding-compact);
+}
+
+/* Page Family Convergence
+ * Exact owners only. Login, Overview, Firewall, modal geometry and existing
+ * router logic remain outside this pass.
+ */
+body:is(
+  [data-page="admin-system-admin-sshkeys"],
+  [data-page="admin-system-admin-repokeys"],
+  [data-page="admin-system-package-manager"],
+  [data-page="admin-system-crontab"],
+  [data-page="admin-system-attendedsysupgrade-configuration"],
+  [data-page="admin-network-network"],
+  [data-page="admin-network-routes"],
+  [data-page="admin-network-dhcp"],
+  [data-page="admin-network-dns"],
+  [data-page="admin-network-diagnostics"],
+  [data-page="admin-status-routes"]
+) #view {
+  display: grid;
+  gap: var(--neo-page-gap);
+  align-items: start;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
+
+body:is(
+  [data-page="admin-system-admin-repokeys"],
+  [data-page="admin-system-attendedsysupgrade-configuration"],
+  [data-page="admin-network-network"],
+  [data-page="admin-network-routes"],
+  [data-page="admin-network-dhcp"],
+  [data-page="admin-network-dns"],
+  [data-page="admin-network-diagnostics"]
+) #view > .cbi-map,
+body[data-page="admin-system-admin-sshkeys"] #view > div,
+body[data-page="admin-system-package-manager"] #view,
+body[data-page="admin-system-crontab"] #view,
+body[data-page="admin-status-routes"] #view > div {
+  min-width: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: var(--neo-panel-padding);
+  border: 1px solid rgba(103, 201, 221, 0.1);
+  border-radius: calc(var(--neovpn-radius-panel-lg) + 0.0625rem);
+  background:
+    radial-gradient(circle at top right, rgba(86, 203, 208, 0.075), transparent 28%),
+    linear-gradient(180deg, rgba(17, 22, 31, 0.98) 0%, rgba(13, 17, 25, 0.98) 100%);
+  box-shadow: 0 18px 34px rgba(3, 6, 12, 0.2);
+}
+
+body:is(
+  [data-page="admin-system-admin-sshkeys"],
+  [data-page="admin-system-admin-repokeys"],
+  [data-page="admin-system-package-manager"],
+  [data-page="admin-system-crontab"],
+  [data-page="admin-system-attendedsysupgrade-configuration"],
+  [data-page="admin-network-network"],
+  [data-page="admin-network-routes"],
+  [data-page="admin-network-dhcp"],
+  [data-page="admin-network-dns"],
+  [data-page="admin-network-diagnostics"],
+  [data-page="admin-status-routes"]
+) #view :is(.cbi-map, .cbi-section, .cbi-section-node, .cbi-tabcontainer, .cbi-value-fieldset, .cbi-page-actions) {
+  box-shadow: none;
+}
+
+body:is(
+  [data-page="admin-system-admin-sshkeys"],
+  [data-page="admin-system-admin-repokeys"],
+  [data-page="admin-system-package-manager"],
+  [data-page="admin-system-crontab"],
+  [data-page="admin-system-attendedsysupgrade-configuration"],
+  [data-page="admin-network-network"],
+  [data-page="admin-network-routes"],
+  [data-page="admin-network-dhcp"],
+  [data-page="admin-network-dns"],
+  [data-page="admin-network-diagnostics"],
+  [data-page="admin-status-routes"]
+) #view :is(> h2, > div > h2, > .cbi-map > h2) {
+  margin: 0 0 0.35rem;
+  color: var(--neovpn-text-primary);
+  font-size: clamp(1.72rem, 1.9vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+body:is(
+  [data-page="admin-system-admin-sshkeys"],
+  [data-page="admin-system-admin-repokeys"],
+  [data-page="admin-system-package-manager"],
+  [data-page="admin-system-crontab"],
+  [data-page="admin-system-attendedsysupgrade-configuration"],
+  [data-page="admin-network-routes"],
+  [data-page="admin-network-diagnostics"],
+  [data-page="admin-status-routes"]
+) #view :is(> p, > div > .cbi-section-descr, > .cbi-map > .cbi-map-descr) {
+  max-width: 66rem;
+  margin: 0 0 1.15rem;
+  color: var(--neovpn-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.58;
+}
+
+body:is(
+  [data-page="admin-system-admin-sshkeys"],
+  [data-page="admin-system-admin-repokeys"],
+  [data-page="admin-system-attendedsysupgrade-configuration"],
+  [data-page="admin-network-network"],
+  [data-page="admin-network-routes"],
+  [data-page="admin-network-dhcp"],
+  [data-page="admin-network-dns"]
+) #view .cbi-tabmenu,
+body[data-page="admin-system-package-manager"] #view > .cbi-tabmenu.mode,
+body[data-page="admin-status-routes"] #view > .cbi-tabmenu {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 1rem;
+  padding: 0 0 0.125rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  scrollbar-width: none;
+}
+
+body:is(
+  [data-page="admin-system-admin-sshkeys"],
+  [data-page="admin-system-admin-repokeys"],
+  [data-page="admin-system-attendedsysupgrade-configuration"],
+  [data-page="admin-network-network"],
+  [data-page="admin-network-routes"],
+  [data-page="admin-network-dhcp"],
+  [data-page="admin-network-dns"]
+) #view .cbi-tabmenu::-webkit-scrollbar,
+body[data-page="admin-system-package-manager"] #view > .cbi-tabmenu.mode::-webkit-scrollbar,
+body[data-page="admin-status-routes"] #view > .cbi-tabmenu::-webkit-scrollbar {
+  display: none;
+}
+
+body:is(
+  [data-page="admin-system-admin-sshkeys"],
+  [data-page="admin-system-admin-repokeys"],
+  [data-page="admin-system-attendedsysupgrade-configuration"],
+  [data-page="admin-network-network"],
+  [data-page="admin-network-routes"],
+  [data-page="admin-network-dhcp"],
+  [data-page="admin-network-dns"]
+) #view .cbi-tabmenu > li > a,
+body[data-page="admin-system-package-manager"] #view > .cbi-tabmenu.mode > li > a,
+body[data-page="admin-status-routes"] #view > .cbi-tabmenu > li > a {
+  min-height: 2.375rem;
+  padding: 0.52rem 0.86rem;
+  border-radius: var(--neovpn-control-radius);
+  font-size: 0.875rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: none;
+}
+
+body:is(
+  [data-page="admin-system-admin-sshkeys"],
+  [data-page="admin-system-admin-repokeys"],
+  [data-page="admin-system-attendedsysupgrade-configuration"],
+  [data-page="admin-network-network"],
+  [data-page="admin-network-routes"],
+  [data-page="admin-network-dhcp"],
+  [data-page="admin-network-dns"],
+  [data-page="admin-network-diagnostics"]
+) #view > .cbi-map > .cbi-section,
+body[data-page="admin-system-admin-sshkeys"] #view .cbi-section-node,
+body[data-page="admin-system-crontab"] #view > p:has(> textarea),
+body[data-page="admin-system-package-manager"] #view > :is(.controls, #packages.table),
+body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] {
+  min-width: 0;
+  margin: 0;
+  padding: var(--neo-panel-padding-compact);
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(24, 30, 42, 0.98) 0%, rgba(18, 23, 33, 0.98) 100%);
+}
+
+body[data-page="admin-system-package-manager"] #view > style {
+  display: none;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(209, 166, 58, 0.18);
+  border-radius: var(--neovpn-radius-section);
+  background: linear-gradient(90deg, rgba(209, 166, 58, 0.09), rgba(12, 17, 29, 0.62));
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(16rem, 1fr));
+  gap: 0.8rem 1rem;
+  align-items: start;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+  padding: 0;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:first-child,
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(4),
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(5) {
+  grid-column: 1 / -1;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls :is(label, #disk-space-label, #filter-label, #download-label, #action-label) {
+  color: var(--neovpn-text-secondary);
+  font-size: 0.83rem;
+  font-weight: 650;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .control-group {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .control-group > input[type="text"] {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .control-group > :is(.btn, .cbi-button) {
+  flex: 0 0 auto;
+}
+
+body[data-page="admin-system-package-manager"] #view > .controls {
+  padding: 0.65rem;
+}
+
+body[data-page="admin-system-package-manager"] #view > .controls > .pager.center {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+body[data-page="admin-system-package-manager"] #packages.table {
+  overflow: hidden;
+}
+
+body[data-page="admin-system-admin-sshkeys"] #view .cbi-dynlist {
+  display: grid;
+  gap: 0.75rem;
+}
+
+body[data-page="admin-system-admin-sshkeys"] #view .cbi-dynlist > p {
+  margin: 0;
+}
+
+body[data-page="admin-system-admin-sshkeys"] #view .cbi-dynlist > .add-item {
+  display: flex;
+  align-items: stretch;
+  gap: 0.55rem;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+}
+
+body[data-page="admin-system-admin-sshkeys"] #view .cbi-dynlist > .add-item > input[type="text"] {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+}
+
+body[data-page="admin-system-admin-sshkeys"] #view .cbi-dynlist > .add-item > .cbi-button {
+  flex: 0 0 auto;
+}
+
+body[data-page="admin-system-admin-repokeys"] #view #cbi-json-keys,
+body[data-page="admin-system-admin-repokeys"] #view #cbi-json-fup {
+  display: grid;
+  gap: 0.8rem;
+}
+
+body[data-page="admin-system-admin-repokeys"] #view #cbi-json-fup .cbi-section-node {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+body[data-page="admin-system-admin-repokeys"] #view #key-input {
+  width: 100% !important;
+  min-height: 8rem !important;
+}
+
+body[data-page="admin-system-admin-repokeys"] #view #key-input + .right {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.65rem;
+}
+
+body[data-page="admin-system-crontab"] #view > p:has(> textarea) {
+  display: grid;
+  gap: 0.65rem;
+}
+
+body[data-page="admin-system-crontab"] #view > p:has(> textarea)::before {
+  content: "Crontab editor";
+  color: var(--neovpn-text-primary);
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+body[data-page="admin-system-crontab"] #view textarea {
+  width: 100% !important;
+  min-height: 16rem;
+  margin: 0;
+}
+
+body[data-page="admin-system-crontab"] #view > .cbi-page-actions,
+body:is(
+  [data-page="admin-system-attendedsysupgrade-configuration"],
+  [data-page="admin-network-network"],
+  [data-page="admin-network-routes"],
+  [data-page="admin-network-dhcp"],
+  [data-page="admin-network-dns"]
+) #view > .cbi-page-actions {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0.8rem 1rem;
+  justify-content: flex-end;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(17, 22, 31, 0.98) 0%, rgba(13, 17, 25, 0.98) 100%);
+}
+
+body:is(
+  [data-page="admin-system-attendedsysupgrade-configuration"],
+  [data-page="admin-network-network"],
+  [data-page="admin-network-routes"],
+  [data-page="admin-network-dhcp"],
+  [data-page="admin-network-dns"]
+) #view .cbi-map-tabbed > [data-tab-active="true"],
+body:is([data-page="admin-network-diagnostics"]) #view .cbi-section-node {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+body:is([data-page="admin-network-network"], [data-page="admin-network-routes"], [data-page="admin-network-dhcp"], [data-page="admin-network-dns"]) #view .cbi-section > h3 {
+  margin: 0 0 0.75rem;
+  color: var(--neovpn-text-primary);
+  font-size: 1.06rem;
+  font-weight: 700;
+}
+
+body:is(
+  [data-page="admin-system-admin-repokeys"],
+  [data-page="admin-system-package-manager"],
+  [data-page="admin-system-attendedsysupgrade-configuration"],
+  [data-page="admin-network-network"],
+  [data-page="admin-network-routes"],
+  [data-page="admin-network-dhcp"],
+  [data-page="admin-network-dns"],
+  [data-page="admin-network-diagnostics"],
+  [data-page="admin-status-routes"]
+) #view :is(.table, .cbi-section-table) {
+  margin: 0;
+  border-radius: var(--neovpn-radius-section);
+  background: var(--neovpn-table-bg);
+}
+
+body:is(
+  [data-page="admin-system-admin-repokeys"],
+  [data-page="admin-system-package-manager"],
+  [data-page="admin-system-attendedsysupgrade-configuration"],
+  [data-page="admin-network-network"],
+  [data-page="admin-network-routes"],
+  [data-page="admin-network-dhcp"],
+  [data-page="admin-network-dns"],
+  [data-page="admin-network-diagnostics"],
+  [data-page="admin-status-routes"]
+) #view :is(.table, .cbi-section-table) :is(th, td, .th, .td, .cbi-section-table-cell, .cbi-value-field) {
+  padding: var(--neo-table-cell-padding-y) var(--neo-table-cell-padding-x);
+}
+
+body[data-page="admin-network-diagnostics"] #view .cbi-section {
+  display: grid;
+  gap: 0.85rem;
+}
+
+body[data-page="admin-network-diagnostics"] #view .table {
+  overflow: hidden;
+}
+
+body[data-page="admin-network-diagnostics"] #view textarea[id="widget.command-output"] {
+  min-height: 10rem;
+  margin-top: 0.35rem;
+}
+
+/* System Backup / Flash Firmware convergence
+ * Safe owner: admin-system-flash. Firmware upload, backup and reset handlers
+ * stay native; this block only aligns page frame, tabs and operational groups.
+ */
+body[data-page="admin-system-flash"] #view {
+  display: grid;
+  gap: var(--neo-page-gap);
+  align-items: start;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
+
+body[data-page="admin-system-flash"] #view > .cbi-map {
+  min-width: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: var(--neo-panel-padding);
+  border: 1px solid rgba(103, 201, 221, 0.1);
+  border-radius: calc(var(--neovpn-radius-panel-lg) + 0.0625rem);
+  background:
+    radial-gradient(circle at top right, rgba(86, 203, 208, 0.075), transparent 28%),
+    linear-gradient(180deg, rgba(17, 22, 31, 0.98) 0%, rgba(13, 17, 25, 0.98) 100%);
+  box-shadow: 0 18px 34px rgba(3, 6, 12, 0.2);
+}
+
+body[data-page="admin-system-flash"] #view > .cbi-map > h2 {
+  margin: 0 0 0.35rem;
+  color: var(--neovpn-text-primary);
+  font-size: clamp(1.72rem, 1.9vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-tabmenu {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 1rem;
+  padding: 0 0 0.125rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-tabmenu::-webkit-scrollbar {
+  display: none;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-tabmenu > li > a {
+  min-height: 2.375rem;
+  padding: 0.52rem 0.86rem;
+  border-radius: var(--neovpn-control-radius);
+  font-size: 0.875rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: none;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-map-tabbed > [data-tab-active="true"],
+body[data-page="admin-system-flash"] #view .cbi-section-node {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-value[data-widget="CBI.ContainerValue"] > .cbi-section,
+body[data-page="admin-system-flash"] #view .cbi-map-tabbed > [data-tab-active="true"] > .cbi-section {
+  min-width: 0;
+  margin: 0 0 0.85rem;
+  padding: var(--neo-panel-padding-compact);
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(24, 30, 42, 0.98) 0%, rgba(18, 23, 33, 0.98) 100%);
+  box-shadow: none;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-value[data-widget="CBI.ContainerValue"] > .cbi-section > h3,
+body[data-page="admin-system-flash"] #view .cbi-map-tabbed > [data-tab-active="true"] > .cbi-section > h3 {
+  margin: 0 0 0.45rem;
+  color: var(--neovpn-text-primary);
+  font-size: 1.06rem;
+  font-weight: 700;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-value {
+  grid-template-columns: minmax(13.5rem, 26%) minmax(0, 1fr);
+}
+
+body[data-page="admin-system-flash"] #view textarea.cbi-input-textarea {
+  width: 100% !important;
+  min-height: 16rem;
+  margin: 0;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-page-actions {
+  width: 100%;
+  max-width: none;
+  margin: 0.85rem 0 0;
+  padding: 0.8rem 1rem;
+  justify-content: flex-end;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(17, 22, 31, 0.98) 0%, rgba(13, 17, 25, 0.98) 100%);
+  box-shadow: none;
+}
+
+/* Overview summary dividers
+ * Page owner only: separates the top Status -> Overview summary strip without
+ * changing data, typography, polling, refresh controls or global components.
+ */
+body[data-page="admin-status-overview"] .neovpn-console__status-strip {
+  --neovpn-overview-summary-divider-gap: 28px;
+  --neovpn-overview-summary-divider-color: rgba(242, 243, 247, 0.075);
+}
+
+body[data-page="admin-status-overview"] .neovpn-console-strip-item {
+  position: relative;
+}
+
+body[data-page="admin-status-overview"] .neovpn-console-strip-item:nth-child(n + 2)::before {
+  content: "";
+  position: absolute;
+  inset-block: 10px;
+  inset-inline-start: calc(var(--neovpn-overview-summary-divider-gap) / -2);
+  width: 1px;
+  background: var(--neovpn-overview-summary-divider-color);
+  pointer-events: none;
+}
+
+/* Targeted Page Consistency Pass — 20260727
+ * Exact live owners only. These rules repair five audited pages without
+ * changing global LuCI form, tab, table or anonymous-section contracts.
+ */
+
+/* Status -> Processes: dense operational table inside the NeoVPN page surface. */
+body[data-page="admin-status-processes"] #view {
+  padding: var(--neo-panel-padding);
+  gap: 0.85rem;
+}
+
+body[data-page="admin-status-processes"] #view > .table {
+  table-layout: auto;
+}
+
+body[data-page="admin-status-processes"] #view > .table > .table-titles {
+  background: linear-gradient(180deg, rgba(31, 37, 50, 0.96) 0%, rgba(25, 31, 43, 0.96) 100%);
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(th, td, .th, .td) {
+  padding: 0.42rem 0.62rem;
+  font-size: 0.78rem;
+  line-height: 1.28;
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(th, .th) {
+  font-size: 0.76rem;
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(th, td, .th, .td):nth-child(1) {
+  width: 4.4rem;
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(th, td, .th, .td):nth-child(2) {
+  width: 7rem;
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(th, td, .th, .td):nth-child(4),
+body[data-page="admin-status-processes"] #view > .table :is(th, td, .th, .td):nth-child(5) {
+  width: 5.4rem;
+  text-align: right;
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(th, td, .th, .td):last-child {
+  width: 8.75rem;
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(td, .td):nth-child(3) {
+  max-width: 0;
+  white-space: normal;
+}
+
+body[data-page="admin-status-processes"] #view > .table :is(td, .td):last-child .btn {
+  min-height: 1.72rem;
+  height: 1.72rem;
+  padding-inline: 0.48rem;
+  border-radius: 0.56rem;
+  font-size: 0.72rem;
+}
+
+/* Software: the live toolbar has five direct groups; only groups 2-4 form the
+ * desktop action row. Disk space and translation mode keep their own rows.
+ */
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls {
+  --neovpn-software-control-height: 2.45rem;
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(320px, 1fr) auto;
+  gap: 0.82rem 1rem;
+  align-items: end;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(17, 22, 31, 0.96) 0%, rgba(13, 17, 25, 0.96) 100%);
+  box-shadow: none;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div {
+  display: grid;
+  gap: 0.42rem;
+  min-width: 0;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:first-child,
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(5) {
+  grid-column: 1 / -1;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(2) {
+  grid-column: 1;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(3) {
+  grid-column: 2;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(4) {
+  grid-column: 3;
+  width: max-content;
+  max-width: 100%;
+  justify-self: start;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(2),
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(3),
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(4) {
+  align-self: end;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls :is(label, #disk-space-label, #filter-label, #download-label, #action-label) {
+  margin: 0;
+  color: var(--neovpn-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .control-group {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(2) .control-group,
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(3) .control-group {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(4) .control-group {
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(5) > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 1rem;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .control-group > input[type="text"] {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: var(--neovpn-software-control-height);
+  min-height: var(--neovpn-software-control-height);
+  padding: 0 var(--neovpn-control-padding-x);
+  border: 1px solid var(--neovpn-field-border);
+  border-radius: var(--neovpn-field-radius);
+  background: var(--neovpn-field-bg);
+  color: var(--neovpn-control-text);
+  font: inherit;
+  line-height: 1.2;
+  box-shadow: var(--neovpn-field-shadow);
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .control-group > input[type="text"]::placeholder {
+  color: var(--neovpn-control-placeholder);
+  opacity: 1;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .control-group > input[type="text"]:is(:hover, :focus, :focus-visible) {
+  border-color: var(--neovpn-control-border-hover);
+  background: var(--neovpn-field-bg);
+  box-shadow: var(--neovpn-field-focus-shadow);
+  outline: 0;
+}
+
+body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .control-group > :is(.btn, .cbi-button) {
+  flex: 0 0 auto;
+  height: var(--neovpn-software-control-height);
+  min-height: var(--neovpn-software-control-height);
+  padding-inline: 0.82rem;
+  white-space: nowrap;
+}
+
+body[data-page="admin-system-package-manager"] #view > .controls {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body[data-page="admin-system-package-manager"] #view > .controls > .pager.center {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr) 2.25rem;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 2.65rem;
+  padding: 0.24rem 0.32rem;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-section);
+  background: linear-gradient(180deg, rgba(19, 24, 34, 0.92) 0%, rgba(14, 18, 27, 0.92) 100%);
+  box-shadow: none;
+}
+
+body[data-page="admin-system-package-manager"] #view > .controls > .pager.center > .text {
+  min-width: 0;
+  text-align: center;
+  color: var(--neovpn-text-secondary);
+  font-size: 0.84rem;
+  line-height: 1.3;
+}
+
+body[data-page="admin-system-package-manager"] #view > .controls > .pager.center > :is(.btn, .cbi-button) {
+  width: 2.25rem;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  min-height: 2.25rem;
+  padding: 0;
+  justify-content: center;
+}
+
+/* Attended Sysupgrade: real live IDs are cbi-attendedsysupgrade-server/client
+ * with a DynamicList at #cbi-attendedsysupgrade-server-rebuilder.
+ */
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade {
+  display: grid;
+  gap: var(--neo-page-gap);
+  min-width: 0;
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade > .cbi-map-tabbed > [data-tab-active="true"] {
+  display: grid;
+  gap: 0.95rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server,
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-client {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+  margin: 0;
+  padding: var(--neo-panel-padding-compact);
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: var(--neovpn-radius-panel);
+  background: linear-gradient(180deg, rgba(24, 30, 42, 0.98) 0%, rgba(18, 23, 33, 0.98) 100%);
+  box-shadow: none;
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server > h3,
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-client > h3 {
+  margin: 0 0 0.75rem;
+  color: var(--neovpn-text-primary);
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade :is(#cbi-attendedsysupgrade-server, #cbi-attendedsysupgrade-client) > .cbi-section-node > .cbi-value,
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade :is(#cbi-attendedsysupgrade-server, #cbi-attendedsysupgrade-client) > .cbi-value {
+  display: grid;
+  grid-template-columns: minmax(13.75rem, 16rem) minmax(0, 1fr);
+  gap: 0.5rem 1rem;
+  align-items: start;
+  min-width: 0;
+  margin: 0;
+  padding: 0.82rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade :is(#cbi-attendedsysupgrade-server, #cbi-attendedsysupgrade-client) .cbi-value:first-of-type {
+  border-top: 0;
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade .cbi-value-title {
+  min-width: 0;
+  color: var(--neovpn-text-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade .cbi-value-field {
+  min-width: 0;
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade .cbi-value-description {
+  grid-column: 2;
+  max-width: 42rem;
+  margin: 0.42rem 0 0;
+  color: var(--neovpn-text-secondary);
+  font-size: 0.83rem;
+  line-height: 1.45;
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server-url :is(input, select) {
+  width: min(100%, 32rem);
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server-rebuilder .cbi-value-field {
+  display: grid;
+  gap: 0.55rem;
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server-rebuilder .cbi-dynlist {
+  display: grid;
+  gap: 0.5rem;
+  width: min(100%, 36rem);
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server-rebuilder .cbi-dynlist > .item {
+  max-width: 36rem;
+  min-height: 2.25rem;
+  padding: 0.45rem 0.58rem;
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server-rebuilder .add-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.25rem;
+  gap: 0.5rem;
+  width: min(100%, 36rem);
+  align-items: stretch;
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server-rebuilder .add-item :is(input, select) {
+  width: 100%;
+  min-width: 0;
+}
+
+body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server-rebuilder .add-item .cbi-button {
+  width: 2.25rem;
+  min-width: 2.25rem;
+  padding-inline: 0;
+}
+
+/* LED Configuration: remove the foreign header strip while preserving the
+ * compact table/actions already accepted for the live cbi-system-led section.
+ */
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-titles {
+  background: rgba(24, 30, 42, 0.98);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+  box-shadow: none;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-titles > :is(.cbi-section-table-cell, .cbi-section-actions) {
+  background: rgba(24, 30, 42, 0.98);
+  border-color: rgba(255, 255, 255, 0.055);
+  box-shadow: none;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-row > :is(.cbi-section-table-cell, .cbi-value-field),
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-titles > :is(.cbi-section-table-cell, .cbi-section-actions) {
+  padding-block: 0.72rem;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-table-titles > .cbi-section-actions {
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+}
+
+body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-actions > div {
+  flex-wrap: nowrap;
+}
+
+/* Backup / Flash Firmware: flatten LuCI's nested operation sections into the
+ * same page-family surface without touching firmware, backup or reset actions.
+ */
+body[data-page="admin-system-flash"] #view .cbi-value[data-widget="CBI.ContainerValue"] {
+  display: block;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-value[data-widget="CBI.ContainerValue"] > .cbi-value-title,
+body[data-page="admin-system-flash"] #view .cbi-value[data-widget="CBI.ContainerValue"] > .cbi-value-description {
+  display: none;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-value[data-widget="CBI.ContainerValue"] > .cbi-section,
+body[data-page="admin-system-flash"] #view .cbi-map-tabbed > [data-tab-active="true"] > .cbi-section {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+  padding: 1rem;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-value[data-widget="CBI.ContainerValue"] + .cbi-value[data-widget="CBI.ContainerValue"],
+body[data-page="admin-system-flash"] #view .cbi-map-tabbed > [data-tab-active="true"] > .cbi-section + .cbi-section {
+  margin-top: 0.8rem;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-section-descr {
+  margin: -0.2rem 0 0;
+  color: var(--neovpn-text-secondary);
+  font-size: 0.86rem;
+  line-height: 1.48;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-section-node > .cbi-value:not([data-widget="CBI.ContainerValue"]) {
+  display: grid;
+  grid-template-columns: minmax(12rem, 22%) minmax(0, 1fr);
+  gap: 0.5rem 1rem;
+  align-items: start;
+  min-width: 0;
+  margin: 0;
+  padding: 0.72rem 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body[data-page="admin-system-flash"] #view .cbi-section-node > .cbi-value:not([data-widget="CBI.ContainerValue"]) > .cbi-value-field {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+  min-width: 0;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-section-node > .cbi-value:not([data-widget="CBI.ContainerValue"]) > .cbi-value-description {
+  grid-column: 2;
+  margin: 0.35rem 0 0;
+  color: var(--neovpn-text-secondary);
+  font-size: 0.83rem;
+  line-height: 1.45;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-section-node > .cbi-value:not([data-widget="CBI.ContainerValue"]) > .cbi-value-title {
+  color: var(--neovpn-text-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+body[data-page="admin-system-flash"] #view .cbi-section-node > .cbi-value:not([data-widget="CBI.ContainerValue"]) .cbi-button-negative {
+  margin-left: 0.35rem;
+}

@@ -1,0 +1,50 @@
+name: Validate
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate repository
+        run: ./scripts/validate.sh
+
+      - name: Check shell syntax
+        run: |
+          sh -n install.sh
+          sh -n uninstall.sh
+          bash -n scripts/build-ipk.sh
+          bash -n scripts/release-check.sh
+
+      - name: Install ShellCheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Run ShellCheck
+        run: shellcheck -e SC1091 install.sh uninstall.sh scripts/*.sh
+
+      - name: Build IPK
+        run: ./scripts/build-ipk.sh
+
+      - name: Inspect package
+        run: ./scripts/release-check.sh
+
+      - name: Upload debug build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: neovpn-ipk-debug
+          path: |
+            dist/luci-theme-neovpn_*.ipk
+            dist/luci-theme-neovpn_all.ipk
+            dist/SHA256SUMS

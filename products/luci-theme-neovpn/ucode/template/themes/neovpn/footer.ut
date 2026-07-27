@@ -1,0 +1,13 @@
+    {% if (!blank_page): %}
+    </div>
+    </main>
+    </div>
+    {% include('themes/neovpn/includes/mobile-nav') %}
+    {% include('themes/neovpn/includes/overlays') %}
+    <script src="{{ media }}/js/app.js?v=20260727-login-logo-v1"></script>
+    <script src="{{ media }}/js/nav.js?v=20260727-login-logo-v1"></script>
+    <script src="{{ media }}/js/dashboard.js?v=20260727-login-logo-v1"></script>
+    </div>
+    {% endif %}
+  </body>
+</html>

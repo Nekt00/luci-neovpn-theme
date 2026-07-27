@@ -1,0 +1,1110 @@
+@media (max-width: 1024px) {
+  .neovpn-theme {
+    --neo-sidebar-width: 13.25rem;
+  }
+
+  .neovpn-theme .neovpn-shell {
+    grid-template-columns: var(--neovpn-layout-sidebar-width) minmax(0, 1fr);
+  }
+
+  .neovpn-theme .neovpn-header {
+    gap: 0.7rem;
+    padding-inline: 0 1rem;
+  }
+
+  .neovpn-theme .neovpn-header__brand {
+    padding-inline-start: 0.95rem;
+  }
+
+  .neovpn-theme .neovpn-header__nav {
+    padding-inline-start: 1.1rem;
+  }
+
+  .neovpn-theme .neovpn-root-menu__link {
+    padding-inline: 0.58rem;
+    font-size: 0.84rem;
+  }
+
+  .neovpn-theme .neovpn-content {
+    padding:
+      var(--neovpn-layout-shell-block-compact)
+      var(--neovpn-layout-shell-gutter-compact)
+      calc(var(--neovpn-layout-shell-block-compact) + var(--neovpn-space-2));
+  }
+
+  .neovpn-theme .neovpn-sidebar {
+    padding-inline: var(--neovpn-layout-shell-gutter-compact);
+  }
+
+  .neovpn-theme .ifacebox {
+    min-width: 12rem;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) #view > .cbi-map {
+    padding: 1rem;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) #view > .cbi-map > .cbi-section {
+    padding: 1rem;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) .cbi-value {
+    grid-template-columns: minmax(12.5rem, 34%) minmax(0, 1fr);
+    column-gap: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .neovpn-theme {
+    --neo-control-height: 2.375rem;
+    --neo-control-height-compact: 2.375rem;
+  }
+
+  .neovpn-theme .neovpn-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: var(--neovpn-layout-header-height) minmax(0, 1fr);
+  }
+
+  .neovpn-theme.neovpn-theme--scroll-lock {
+    overflow: hidden;
+  }
+
+  .neovpn-theme .neovpn-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: calc(var(--neovpn-z-overlay) + 1);
+    width: var(--neovpn-layout-mobile-drawer-width);
+    height: 100dvh;
+    min-height: 100dvh;
+    top: 0;
+    transform: translateX(-100%);
+    transition: transform var(--neovpn-motion-normal);
+    box-shadow: var(--neovpn-shadow-overlay);
+  }
+
+  .neovpn-theme.neovpn-theme--drawer-open .neovpn-sidebar {
+    transform: translateX(0);
+  }
+
+  .neovpn-theme .neovpn-header {
+    grid-column: 1;
+    display: flex;
+    padding-inline: var(--neovpn-layout-shell-gutter-compact);
+  }
+
+  .neovpn-theme .neovpn-main {
+    grid-column: 1;
+  }
+
+  .neovpn-theme .neovpn-header__brand {
+    display: inline-flex;
+  }
+
+  .neovpn-theme .neovpn-header__brand-name::after,
+  .neovpn-theme .neovpn-header__nav {
+    display: none;
+  }
+
+  .neovpn-theme .neovpn-header__title {
+    display: grid;
+  }
+
+  .neovpn-theme .neovpn-header__actions {
+    flex: 0 0 auto;
+    --neovpn-header-segment-height: 2.1rem;
+    --neovpn-header-host-width: 5.1rem;
+    --neovpn-header-mode-min-width: 6.95rem;
+  }
+
+  .neovpn-theme .neovpn-header__host {
+    display: inline-flex;
+    min-height: var(--neovpn-header-segment-height);
+    max-width: none;
+    padding: 0.38rem 0.62rem;
+    font-size: 0.78rem;
+  }
+
+  .neovpn-theme .neovpn-mode-menu__link {
+    min-height: calc(var(--neovpn-header-segment-height) - 0.32rem);
+    padding: 0.24rem 0.58rem;
+    font-size: 0.76rem;
+  }
+
+  .neovpn-theme .neovpn-header__menu,
+  .neovpn-theme .neovpn-sidebar__close {
+    display: inline-flex;
+  }
+
+  .neovpn-theme .neovpn-sidebar__brand {
+    display: grid;
+  }
+
+  .neovpn-theme .neovpn-sidebar__context-label {
+    display: none;
+  }
+
+  .neovpn-theme .neovpn-sidebar .neovpn-menu > .neovpn-menu__item {
+    display: block;
+  }
+
+  .neovpn-theme .neovpn-sidebar .neovpn-menu > .neovpn-menu__item > .neovpn-menu__row {
+    display: grid;
+  }
+
+  .neovpn-theme .neovpn-sidebar .neovpn-menu > .neovpn-menu__item > .neovpn-menu__list {
+    display: flex;
+  }
+
+  .neovpn-theme .neovpn-sidebar .neovpn-menu__item:not(.is-open) > .neovpn-menu__list,
+  .neovpn-theme .neovpn-sidebar .neovpn-menu__list[hidden] {
+    display: none !important;
+  }
+
+  .neovpn-theme .neovpn-sidebar .neovpn-menu__toggle {
+    display: inline-flex;
+  }
+
+  .neovpn-theme .neovpn-content {
+    padding:
+      var(--neovpn-layout-shell-block-compact)
+      var(--neovpn-layout-shell-gutter-compact)
+      calc(var(--neovpn-layout-shell-block-compact) + var(--neovpn-space-2));
+  }
+
+  .neovpn-theme .ifacebox {
+    min-width: 0;
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay {
+    padding: 12px;
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) {
+    width: min(720px, calc(100vw - 24px));
+    max-height: calc(100dvh - 24px);
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty):has(> .cbi-map),
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty):has(> .table),
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty):has(> table) {
+    width: min(900px, calc(100vw - 24px));
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) #view > :is(.cbi-map, .cbi-page-actions) {
+    width: 100%;
+    max-width: none;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) #view > .cbi-map {
+    padding: 1rem;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) #view > .cbi-map > .cbi-section {
+    padding: 1rem;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) .cbi-value {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.45rem;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) .cbi-value-title {
+    padding-top: 0;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) .cbi-page-actions {
+    justify-content: flex-end;
+    padding: 0.9rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .neovpn-theme .neovpn-auth-shell,
+  .neovpn-theme .neovpn-content {
+    padding: var(--neovpn-space-3);
+  }
+
+  .neovpn-theme .neovpn-auth-layout {
+    width: calc(100% - 32px);
+  }
+
+  .neovpn-theme .neovpn-auth-panel {
+    padding: 1.4rem 1.05rem 1.25rem;
+  }
+
+  .neovpn-theme .neovpn-auth-panel__header {
+    gap: 0.875rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .neovpn-theme .neovpn-auth-mark-wrap {
+    inline-size: clamp(92px, 26vw, 108px);
+  }
+
+  .neovpn-theme .neovpn-auth-panel__brand {
+    font-size: 1.9rem;
+  }
+
+  .neovpn-theme .neovpn-auth-panel__footer {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  .neovpn-theme .neovpn-auth-panel__meta-group--host {
+    justify-items: start;
+  }
+
+  .neovpn-theme .neovpn-auth-panel__meta--host {
+    text-align: left;
+  }
+
+  .neovpn-theme .neovpn-sidebar {
+    width: min(88vw, 19rem);
+    padding: var(--neovpn-layout-shell-block-compact) var(--neovpn-layout-shell-gutter-mobile);
+  }
+
+  .neovpn-theme .neovpn-header {
+    min-height: 3.5rem;
+    padding-inline: var(--neovpn-layout-shell-gutter-mobile);
+  }
+
+  .neovpn-theme .neovpn-header__brand-mark {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+  }
+
+  .neovpn-theme .neovpn-content {
+    padding:
+      var(--neovpn-layout-shell-gutter-mobile)
+      var(--neovpn-layout-shell-gutter-mobile)
+      calc(var(--neovpn-layout-shell-block-compact) + var(--neovpn-space-1));
+  }
+
+  .neovpn-theme .neovpn-header__menu,
+  .neovpn-theme .neovpn-sidebar__close,
+  .neovpn-theme .neovpn-menu__toggle,
+  .neovpn-theme .cbi-button,
+  .neovpn-theme .neovpn-auth-form__submit {
+    min-height: 2.5rem;
+    padding-inline: var(--neovpn-space-3);
+  }
+
+  .neovpn-theme .tabs {
+    gap: var(--neovpn-space-1);
+  }
+
+  .neovpn-theme .neovpn-header__title {
+    gap: 0;
+  }
+
+  .neovpn-theme .neovpn-header__crumb {
+    display: none;
+  }
+
+  .neovpn-theme .neovpn-header__page {
+    font-size: 0.92rem;
+  }
+
+  .neovpn-theme .neovpn-header__host {
+    max-width: none;
+  }
+
+  .neovpn-theme .neovpn-mode-menu {
+    padding: 0.16rem;
+  }
+
+  .neovpn-theme .neovpn-auth-form__input,
+  .neovpn-theme .neovpn-auth-form__submit {
+    min-height: 3.2rem;
+  }
+
+  .neovpn-theme .cbi-value-field .control-group:not(.add-item) {
+    flex-wrap: wrap;
+  }
+
+  .neovpn-theme .cbi-value-field .control-group:not(.add-item) > input[type="text"],
+  .neovpn-theme .cbi-value-field .control-group:not(.add-item) > input[type="password"],
+  .neovpn-theme .cbi-value-field .control-group:not(.add-item) > input[type="number"],
+  .neovpn-theme .cbi-value-field .control-group:not(.add-item) > input[type="search"],
+  .neovpn-theme .cbi-value-field .control-group:not(.add-item) > select,
+  .neovpn-theme .cbi-value-field .control-group:not(.add-item) > textarea,
+  .neovpn-theme .cbi-value-field .control-group:not(.add-item) > .cbi-dropdown,
+  .neovpn-theme .cbi-value-field .control-group:not(.add-item) > :is(.btn, .cbi-button, button) {
+    width: 100%;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) #view {
+    gap: 0.75rem;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) #view > .cbi-map {
+    padding: 0.75rem;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) #view > .cbi-map > .cbi-section {
+    padding: 0.85rem 0.75rem;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) .cbi-page-actions {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    padding: 0.8rem 0.75rem;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) .cbi-page-actions > * {
+    max-width: 100%;
+  }
+
+  body:is(
+    [data-page="admin-system-system"],
+    [data-page="admin-system-admin-password"],
+    [data-page="admin-system-admin-dropbear"],
+    [data-page="admin-system-admin-uhttpd"]
+  ) .cbi-page-actions > .cbi-dropdown.btn.cbi-button {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  body[data-page="admin-system-system"] #view .cbi-section-node-tabbed > [data-tab="timesync"] .cbi-value[data-widget="CBI.DynamicList"][data-name="server"] .cbi-value-description,
+  body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server-rebuilder .cbi-value-description {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .neovpn-theme .neovpn-header__menu,
+  .neovpn-theme .neovpn-sidebar__close {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .neovpn-theme :is(.cbi-title h3, .cbi-section > h3, .panel-title, .neovpn-dashboard-notices__header, .neovpn-dashboard__section-heading) {
+    flex-wrap: wrap;
+  }
+
+  .neovpn-theme :is(.alert-message, .errorbox, .warningbox, .notice, .cbi-empty) {
+    padding: 0.9rem;
+  }
+
+  .neovpn-theme :is(.zonebadge, .ifacebadge, .port-status-device, .port-status-link, .label, .neovpn-status) {
+    max-width: 100%;
+  }
+
+  .neovpn-theme .cbi-section-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .neovpn-theme .cbi-section:has(> :is(.cbi-section-remove, .cbi-section-actions)) {
+    gap: 0.65rem 0.75rem;
+  }
+
+  .neovpn-theme .cbi-section:has(> :is(.cbi-section-remove, .cbi-section-actions)) > :is(.cbi-section-remove, .cbi-section-actions) {
+    width: auto;
+  }
+
+  .neovpn-theme .cbi-section:has(> :is(.cbi-section-remove, .cbi-section-actions)) > :is(.cbi-section-node, .cbi-section-node-tabbed) {
+    padding: 0.8rem;
+  }
+
+  .neovpn-theme .cbi-tooltip {
+    max-width: min(18rem, calc(100vw - 2rem));
+  }
+
+  /* Stage 6.2-R2.1 — Family B mobile containment
+   * Exact page/section ownership only. Real table sections keep their
+   * semantics and may scroll locally instead of forcing page-level overflow.
+   */
+  body[data-page="admin-system-leds"] #cbi-system-led,
+  body[data-page="admin-network-dhcp"] :is(
+    #cbi-dhcp-host,
+    #cbi-dhcp-relay,
+    #cbi-dhcp-tag,
+    #cbi-dhcp-match,
+    #cbi-dhcp-vendorclass,
+    #cbi-dhcp-userclass,
+    #cbi-dhcp-boot,
+    #cbi-dhcp-pxe-service
+  ) {
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+  }
+
+  body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-table,
+  body[data-page="admin-network-dhcp"] :is(
+    #cbi-dhcp-host,
+    #cbi-dhcp-relay,
+    #cbi-dhcp-tag,
+    #cbi-dhcp-match,
+    #cbi-dhcp-vendorclass,
+    #cbi-dhcp-userclass,
+    #cbi-dhcp-boot,
+    #cbi-dhcp-pxe-service
+  ) > .cbi-section-table {
+    min-width: max-content;
+  }
+
+  body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-create,
+  body[data-page="admin-network-dhcp"] :is(
+    #cbi-dhcp-host,
+    #cbi-dhcp-relay,
+    #cbi-dhcp-tag,
+    #cbi-dhcp-match,
+    #cbi-dhcp-vendorclass,
+    #cbi-dhcp-userclass,
+    #cbi-dhcp-boot,
+    #cbi-dhcp-pxe-service
+  ) > .cbi-section-create {
+    position: sticky;
+    left: 0;
+  }
+
+  body[data-page="admin-system-leds"] #view > .cbi-map {
+    padding: 1rem;
+  }
+
+  body[data-page="admin-system-leds"] #view > .cbi-map > .cbi-map-descr {
+    margin-bottom: 0.75rem;
+  }
+
+  body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-table {
+    min-width: max-content;
+  }
+
+  body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-create {
+    padding: 0.75rem;
+  }
+
+  body[data-page="admin-status-routes"] #view > div {
+    padding: 0.95rem;
+    overflow-x: auto;
+  }
+
+  body[data-page="admin-status-routes"] #view > div > .cbi-section[data-tab][data-tab-title] > .table {
+    min-width: max-content;
+  }
+
+  body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) .neovpn-content__inner {
+    padding: 1rem;
+  }
+
+  body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog textarea#syslog,
+  body[data-page="admin-status-logs-dmesg"] #content_syslog textarea#dmesg {
+    min-width: max-content;
+  }
+
+  body[data-page="admin-status-processes"] #view {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  body[data-page="admin-status-processes"] #view > .table {
+    min-width: 58rem;
+  }
+
+  body[data-page^="admin-network-firewall"] .neovpn-content__inner {
+    padding: 1rem;
+  }
+
+  body[data-page^="admin-network-firewall"] #view > .cbi-map > .cbi-section {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  body[data-page^="admin-network-firewall"] #view > .cbi-map .cbi-section-table {
+    min-width: max-content;
+  }
+
+  body[data-page^="admin-status-realtime"] .neovpn-content__inner {
+    padding: 1rem;
+  }
+
+  body[data-page^="admin-status-realtime"] #view {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  body[data-page^="admin-status-realtime"] #view :is(.table, table) {
+    min-width: max-content;
+  }
+
+  body[data-page="admin-system-startup"] #view {
+    padding: 1rem;
+  }
+
+  body[data-page="admin-system-startup"] #view > div > div > [data-tab][data-tab-title],
+  body[data-page="admin-system-startup"] #view > div > div > div > [data-tab][data-tab-title] {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  body[data-page="admin-system-startup"] #view table.table {
+    min-width: 54rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .neovpn-theme .cbi-empty::before {
+    font-size: 0.72rem;
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay {
+    padding: 8px;
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) {
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
+    padding: 0.875rem 0.875rem 0;
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > :is(.cbi-map, .cbi-modal-body, .modal-body, ul, ol, pre, .table, table) {
+    max-height: calc(100dvh - 9rem);
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    gap: 0.45rem;
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-title {
+    padding-inline-start: 0;
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field {
+    align-items: stretch;
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map :is(input[type="text"], input[type="password"], input[type="number"], input[type="search"], input[type="url"], input[type="email"], select),
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field > .cbi-dropdown {
+    inline-size: 100% !important;
+    width: 100% !important;
+    min-inline-size: 0 !important;
+    min-width: 0 !important;
+    flex-basis: 100%;
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > h4 {
+    padding-right: 2.5rem;
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > :is(.close, .modal-close, button[aria-label="Close"], button[title="Close"]) {
+    top: 0.625rem;
+    right: 0.625rem;
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .button-row,
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .right,
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > div[style*="display:flex"] {
+    justify-content: stretch;
+    margin-inline: -0.875rem;
+    padding: 0.75rem;
+    box-sizing: border-box;
+  }
+
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .button-row .btn,
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .right .btn,
+  .neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > div[style*="display:flex"] .btn {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .neovpn-theme :is(.zonebadge, .ifacebadge, .port-status-device, .port-status-link, .label, .neovpn-status) {
+    white-space: normal;
+  }
+
+  .neovpn-theme .cbi-section-actions > :is(.cbi-button, .btn, .cbi-dropdown.btn) {
+    flex: 1 1 auto;
+  }
+
+  body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-create,
+  body[data-page="admin-network-dhcp"] :is(
+    #cbi-dhcp-host,
+    #cbi-dhcp-relay,
+    #cbi-dhcp-tag,
+    #cbi-dhcp-match,
+    #cbi-dhcp-vendorclass,
+    #cbi-dhcp-userclass,
+    #cbi-dhcp-boot,
+    #cbi-dhcp-pxe-service
+  ) > .cbi-section-create {
+    padding: 0.75rem;
+  }
+
+  body[data-page="admin-system-leds"] #view {
+    gap: 0.75rem;
+  }
+
+  body[data-page="admin-system-leds"] #view > .cbi-map {
+    padding: 0.75rem;
+  }
+
+  body[data-page="admin-system-leds"] #cbi-system-led .cbi-section-actions > :is(.cbi-button, .btn, .cbi-dropdown.btn) {
+    flex: 0 0 auto;
+  }
+
+  body[data-page="admin-status-routes"] #view {
+    gap: 0;
+  }
+
+  body[data-page="admin-status-routes"] #view > p {
+    margin-top: 0;
+  }
+
+  body[data-page="admin-status-routes"] #view > .cbi-tabmenu {
+    gap: 0.45rem;
+  }
+
+  body[data-page="admin-status-routes"] #view > .cbi-tabmenu > li > a {
+    min-height: 2.6rem;
+    padding-inline: 0.9rem;
+  }
+
+  body[data-page="admin-status-routes"] #view > div {
+    padding: 0.7rem;
+  }
+
+  body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) .neovpn-content__inner {
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog {
+    gap: 0.7rem;
+    padding: 0.75rem;
+  }
+
+  body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog > div:not(.cbi-section-descr) {
+    gap: 0.5rem;
+  }
+
+  body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog :is(input[type="text"], input[type="number"], select) {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog textarea#syslog,
+  body[data-page="admin-status-logs-dmesg"] #content_syslog textarea#dmesg {
+    min-height: 20rem;
+    height: 54vh;
+  }
+
+  body[data-page="admin-status-processes"] #view {
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  body[data-page="admin-status-processes"] #view > .cbi-map-descr {
+    margin-top: -0.1rem;
+  }
+
+  body[data-page="admin-status-processes"] #view > .table :is(th, td, .th, .td) {
+    padding: 0.58rem 0.65rem;
+  }
+
+  body[data-page="admin-status-processes"] #view > .table :is(td, .td):last-child .btn {
+    min-height: 1.9rem;
+    height: 1.9rem;
+    padding-inline: 0.5rem;
+  }
+
+  body[data-page^="admin-network-firewall"] .neovpn-content__inner {
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  body[data-page^="admin-network-firewall"] #view > .cbi-map > .cbi-map-descr {
+    margin-top: -0.1rem;
+  }
+
+  body[data-page^="admin-network-firewall"] #view > .cbi-map > .cbi-section {
+    padding: 0.75rem;
+  }
+
+  body[data-page^="admin-network-firewall"] #view > .cbi-map .cbi-value {
+    padding-block: 0.62rem;
+  }
+
+  body[data-page^="admin-network-firewall"] #view > .cbi-map .cbi-section-table :is(th, td, .th, .td, .cbi-section-table-cell, .cbi-value-field) {
+    padding: 0.58rem 0.65rem;
+  }
+
+  body[data-page^="admin-status-realtime"] .neovpn-content__inner {
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  body[data-page^="admin-status-realtime"] .neovpn-content__inner::after {
+    margin-top: -0.1rem;
+  }
+
+  body[data-page^="admin-status-realtime"] #view {
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  body[data-page^="admin-status-realtime"] #view svg {
+    min-height: 14rem;
+  }
+
+  body[data-page^="admin-status-realtime"] #view :is(th, td, .th, .td) {
+    padding: 0.58rem 0.65rem;
+  }
+
+  body[data-page="admin-system-startup"] #view {
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  body[data-page="admin-system-startup"] #view > div {
+    gap: 0.75rem;
+  }
+
+  body[data-page="admin-system-startup"] #view > div > div > [data-tab][data-tab-title],
+  body[data-page="admin-system-startup"] #view > div > div > div > [data-tab][data-tab-title] {
+    padding: 0.75rem;
+  }
+
+  body[data-page="admin-system-startup"] #view table.table :is(th, td, .th, .td) {
+    padding: 0.54rem 0.62rem;
+  }
+
+  body[data-page="admin-system-startup"] #view table.table :is(td, .td):last-child .btn {
+    min-height: 1.85rem;
+    height: 1.85rem;
+    padding-inline: 0.48rem;
+  }
+
+  body[data-page="admin-system-startup"] #view textarea {
+    min-height: 18rem;
+  }
+
+  body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog > div:not(.cbi-section-descr) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body:is([data-page="admin-status-logs-syslog"], [data-page="admin-status-logs-dmesg"]) #content_syslog :is(input[type="text"], input[type="number"], select, #scrollDownButton, #scrollUpButton) {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  body[data-page="admin-system-admin-dropbear"] #view > .cbi-map > .cbi-section > .cbi-value {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="admin-system-admin-sshkeys"] #view :is(.control-group, .cbi-value-field, .cbi-section-create) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body:is(
+    [data-page="admin-system-admin-sshkeys"],
+    [data-page="admin-system-admin-repokeys"],
+    [data-page="admin-system-package-manager"],
+    [data-page="admin-system-crontab"],
+    [data-page="admin-system-attendedsysupgrade-configuration"],
+    [data-page="admin-system-flash"],
+    [data-page="admin-network-network"],
+    [data-page="admin-network-routes"],
+    [data-page="admin-network-dhcp"],
+    [data-page="admin-network-dns"],
+    [data-page="admin-network-diagnostics"],
+    [data-page="admin-status-routes"]
+  ) #view {
+    gap: 0.75rem;
+  }
+
+  body:is(
+    [data-page="admin-system-admin-repokeys"],
+    [data-page="admin-system-attendedsysupgrade-configuration"],
+    [data-page="admin-system-flash"],
+    [data-page="admin-network-network"],
+    [data-page="admin-network-routes"],
+    [data-page="admin-network-dhcp"],
+    [data-page="admin-network-dns"],
+    [data-page="admin-network-diagnostics"]
+  ) #view > .cbi-map,
+  body[data-page="admin-system-admin-sshkeys"] #view > div,
+  body[data-page="admin-system-package-manager"] #view,
+  body[data-page="admin-system-crontab"] #view,
+  body[data-page="admin-status-routes"] #view > div {
+    padding: 0.85rem;
+    border-radius: var(--neovpn-radius-panel);
+  }
+
+  body:is(
+    [data-page="admin-system-admin-sshkeys"],
+    [data-page="admin-system-admin-repokeys"],
+    [data-page="admin-system-package-manager"],
+    [data-page="admin-system-crontab"],
+    [data-page="admin-system-attendedsysupgrade-configuration"],
+    [data-page="admin-system-flash"],
+    [data-page="admin-network-network"],
+    [data-page="admin-network-routes"],
+    [data-page="admin-network-dhcp"],
+    [data-page="admin-network-dns"],
+    [data-page="admin-network-diagnostics"],
+    [data-page="admin-status-routes"]
+  ) #view :is(.cbi-tabmenu, .tabs) > li > a {
+    min-height: 2.25rem;
+    padding: 0.48rem 0.72rem;
+  }
+
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls,
+  body[data-page="admin-system-admin-sshkeys"] #view .cbi-dynlist > .add-item,
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .control-group {
+    grid-template-columns: minmax(0, 1fr);
+    flex-direction: column;
+  }
+
+  body[data-page="admin-system-admin-sshkeys"] #view .cbi-dynlist > .add-item > .cbi-button,
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .control-group > :is(.btn, .cbi-button) {
+    width: 100%;
+  }
+
+  body:is(
+    [data-page="admin-system-admin-repokeys"],
+    [data-page="admin-system-package-manager"],
+    [data-page="admin-system-attendedsysupgrade-configuration"],
+    [data-page="admin-system-flash"],
+    [data-page="admin-network-network"],
+    [data-page="admin-network-routes"],
+    [data-page="admin-network-dhcp"],
+    [data-page="admin-network-dns"],
+    [data-page="admin-network-diagnostics"],
+    [data-page="admin-status-routes"]
+  ) #view :is(.table, .cbi-section-table) {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .neovpn-theme .neovpn-header {
+    gap: 0.45rem;
+    padding-inline: 0.6rem;
+  }
+
+  .neovpn-theme .neovpn-header__brand {
+    min-width: 0;
+  }
+
+  .neovpn-theme .neovpn-header__brand-name {
+    max-width: 4.9rem;
+  }
+
+  .neovpn-theme .neovpn-header__actions {
+    min-width: 0;
+    --neovpn-header-mode-min-width: 0;
+  }
+
+  .neovpn-theme .neovpn-header__title {
+    display: none;
+  }
+
+  .neovpn-theme .neovpn-header__host {
+    display: none;
+  }
+
+  .neovpn-theme .neovpn-mode-menu__link {
+    padding-inline: 0.48rem;
+    font-size: 0.7rem;
+  }
+}
+
+@media (min-width: 561px) and (max-width: 900px) {
+  body[data-page="admin-status-overview"] .neovpn-console__status-strip {
+    --neovpn-overview-summary-divider-gap: 28px;
+  }
+
+  body[data-page="admin-status-overview"] .neovpn-console-strip-item:nth-child(n + 2)::before {
+    content: none;
+  }
+
+  body[data-page="admin-status-overview"] .neovpn-console-strip-item:nth-child(2n)::before {
+    content: "";
+    position: absolute;
+    inset-block: 10px;
+    inset-inline-start: calc(var(--neovpn-overview-summary-divider-gap) / -2);
+    width: 1px;
+    background: var(--neovpn-overview-summary-divider-color, rgba(242, 243, 247, 0.075));
+    pointer-events: none;
+  }
+
+  body[data-page="admin-status-overview"] .neovpn-console-strip-item:nth-child(n + 3) {
+    border-top: 1px solid rgba(242, 243, 247, 0.055);
+    padding-top: 14px;
+  }
+}
+
+@media (max-width: 560px) {
+  body[data-page="admin-status-overview"] .neovpn-console-strip-item:nth-child(n + 2)::before {
+    content: none;
+  }
+}
+
+/* Targeted Page Consistency responsive ownership — exact audited pages only. */
+@media (max-width: 79.99rem) {
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(4),
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(5) {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 47.99rem) {
+  body[data-page="admin-status-processes"] #view,
+  body[data-page="admin-system-attendedsysupgrade-configuration"] #view > .cbi-map,
+  body[data-page="admin-system-flash"] #view > .cbi-map {
+    padding: 0.85rem;
+  }
+
+  body[data-page="admin-status-processes"] #view > .table,
+  body[data-page="admin-system-leds"] #cbi-system-led > .cbi-section-table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0.85rem;
+  }
+
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div {
+    grid-column: 1 / -1;
+  }
+
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(2),
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(3),
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(4),
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(5) {
+    grid-column: 1 / -1;
+    width: auto;
+    justify-self: stretch;
+  }
+
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(2) .control-group,
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls > div:nth-child(3) .control-group {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .control-group {
+    flex-direction: column;
+  }
+
+  body[data-page="admin-system-package-manager"] #view > .cbi-map-descr + .controls .control-group > :is(.btn, .cbi-button) {
+    width: 100%;
+  }
+
+  body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade :is(#cbi-attendedsysupgrade-server, #cbi-attendedsysupgrade-client) > .cbi-section-node > .cbi-value,
+  body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade :is(#cbi-attendedsysupgrade-server, #cbi-attendedsysupgrade-client) > .cbi-value,
+  body[data-page="admin-system-flash"] #view .cbi-section-node > .cbi-value:not([data-widget="CBI.ContainerValue"]) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade .cbi-value-description,
+  body[data-page="admin-system-flash"] #view .cbi-section-node > .cbi-value:not([data-widget="CBI.ContainerValue"]) > .cbi-value-description {
+    grid-column: 1;
+  }
+
+  body[data-page="admin-system-attendedsysupgrade-configuration"] #cbi-attendedsysupgrade-server-rebuilder .add-item {
+    width: 100%;
+  }
+
+  body[data-page="admin-system-flash"] #view .cbi-section-node > .cbi-value:not([data-widget="CBI.ContainerValue"]) > .cbi-value-field {
+    align-items: stretch;
+  }
+
+  body[data-page="admin-system-flash"] #view .cbi-section-node > .cbi-value:not([data-widget="CBI.ContainerValue"]) > .cbi-value-field > :is(.btn, .cbi-button, input, select) {
+    width: 100%;
+  }
+}

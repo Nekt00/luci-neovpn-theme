@@ -1,0 +1,15 @@
+<aside class="neovpn-sidebar" id="neovpn-sidebar" aria-label="{{ _('Primary navigation') }}" aria-hidden="false">
+  <div class="neovpn-sidebar__brand">
+    <a class="neovpn-sidebar__brand-link" href="{{ dispatcher.build_url() }}">
+      <span class="neovpn-sidebar__brand-name">{{ _('NeoVPN') }}</span>
+      <span class="neovpn-sidebar__brand-meta">{{ boardinfo?.hostname ?? boardinfo?.model ?? _('Router') }}</span>
+    </a>
+  </div>
+  <button class="neovpn-sidebar__close" type="button" aria-label="{{ _('Close navigation') }}" aria-controls="neovpn-sidebar" aria-expanded="false">
+    <span class="neovpn-sidebar__close-label">{{ _('Close') }}</span>
+  </button>
+  <div class="neovpn-sidebar__context-label" id="contextmenu-label">{{ _('Navigation') }}</div>
+  <nav class="neovpn-sidebar__nav" aria-label="{{ _('Primary navigation') }}">
+    <ul class="neovpn-menu" id="topmenu"></ul>
+  </nav>
+</aside>

@@ -1,0 +1,9 @@
+{
+  "id": "podkop",
+  "name": "Podkop",
+  "service": "podkop",
+  "backend": "sing-box",
+  "packages": ["podkop", "luci-app-podkop"],
+  "paths": ["/etc/init.d/podkop", "/etc/config/podkop"],
+  "ui": "luci-app-podkop"
+}

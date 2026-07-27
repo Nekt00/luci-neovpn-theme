@@ -1,0 +1,131 @@
+{#
+ Copyright 2008 Steven Barth <steven@midlink.org>
+ Copyright 2008-2022 Jo-Philipp Wich <jo@mein.io>
+ Licensed to the public under the Apache License 2.0.
+-#}
+
+{%
+	import { getuid, getspnam } from 'luci.core';
+
+	const boardinfo = ubus.call('system', 'board');
+	const route_segments = length(ctx.path ?? []) ? ctx.path : (ctx.request_path ?? []);
+	const page_id = entityencode(
+		replace(lc(join('-', route_segments)), /[^a-z0-9_-]+/g, '-'),
+		true
+	);
+
+	http.prepare_content('text/html; charset=UTF-8');
+-%}
+
+<!DOCTYPE html>
+<html lang="{{ dispatcher.lang }}">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ striptags(`${dispatched?.title ? `${_(dispatched.title)} — ` : ''}NeoVPN`) }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ media }}/img/favicon-neovpn-32.png?v=20260727-login-logo-v1">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ media }}/img/favicon-neovpn-16.png?v=20260727-login-logo-v1">
+    <link rel="shortcut icon" href="{{ media }}/img/favicon.ico?v=20260727-login-logo-v1">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ media }}/img/apple-touch-icon-neovpn.png?v=20260727-login-logo-v1">
+    <link rel="stylesheet" href="{{ media }}/css/tokens.css?v=20260727-login-logo-v1">
+    <link rel="stylesheet" href="{{ media }}/css/foundations.css?v=20260727-login-logo-v1">
+    <link rel="stylesheet" href="{{ media }}/css/layout.css?v=20260727-login-logo-v1">
+    <link rel="stylesheet" href="{{ media }}/css/components.css?v=20260727-login-logo-v1">
+    <link rel="stylesheet" href="{{ media }}/css/pages.css?v=20260727-login-logo-v1">
+    <link rel="stylesheet" href="{{ media }}/css/dashboard.css?v=20260727-login-logo-v1">
+    <link rel="stylesheet" href="{{ media }}/css/compatibility.css?v=20260727-login-logo-v1">
+    <link rel="stylesheet" href="{{ media }}/css/product.css?v=20260727-login-logo-v1">
+    <link rel="stylesheet" href="{{ media }}/css/modals.css?v=20260727-login-logo-v1">
+    <link rel="stylesheet" href="{{ media }}/css/responsive.css?v=20260727-login-logo-v1">
+    <script src="{{ dispatcher.build_url('admin/translations', dispatcher.lang) }}"></script>
+    <script src="{{ resource }}/cbi.js"></script>
+  </head>
+  <body class="neovpn-theme{% if (blank_page): %} neovpn-auth{% endif %} lang_{{ dispatcher.lang }}" data-page="{{ page_id }}">
+    {% if (blank_page): %}
+    <script>
+      (function() {
+        try {
+          window.sessionStorage.removeItem("neovpn.shell.entered");
+        }
+        catch (e) {}
+      }());
+    </script>
+    {% endif %}
+    {% if (!blank_page): %}
+    <script>
+      (function() {
+        var key = "neovpn.shell.entered";
+
+        try {
+          if (window.sessionStorage.getItem(key) === "1") {
+            return;
+          }
+
+          document.body.classList.add("neo-shell-enter");
+
+          if (window.requestAnimationFrame) {
+            window.requestAnimationFrame(function() {
+              window.sessionStorage.setItem(key, "1");
+            });
+          }
+          else {
+            window.sessionStorage.setItem(key, "1");
+          }
+        }
+        catch (e) {}
+      }());
+    </script>
+    {% endif %}
+    {% if (!blank_page && page_id == "admin-status-overview"): %}
+    <script>
+      (function() {
+        var body = document.body;
+
+        if (!body) {
+          return;
+        }
+
+        body.dataset.neovpnOverviewInit = "1";
+        body.dataset.neovpnOverviewReady = "false";
+
+        window.__neovpnOverviewFallbackTimer = window.setTimeout(function() {
+          if (document.body && document.body.dataset.neovpnOverviewReady !== "true") {
+            document.body.dataset.neovpnOverviewReady = "true";
+          }
+        }, 1800);
+      }());
+    </script>
+    {% endif %}
+    {% if (!blank_page): %}
+    {% include('themes/neovpn/includes/shell') %}
+    {% if (getuid() == 0 && getspnam('root')?.pwdp === ''): %}
+    <div class="neovpn-content__notice">
+      <div class="alert-message warning">
+        <h4>{{ _('No password set!') }}</h4>
+        <p>{{ _('There is no password set on this router. Please configure a root password to protect the web interface.') }}</p>
+        {% if (dispatcher.lookup("admin/system/admin")): %}
+        <div class="right"><a class="btn" href="{{ dispatcher.build_url("admin/system/admin") }}">{{ _('Go to password configuration...') }}</a></div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+    {% if (boardinfo?.rootfs_type == "initramfs"): %}
+    <div class="neovpn-content__notice">
+      <div class="alert-message warning">
+        <h4>{{ _('System running in recovery (initramfs) mode.') }}</h4>
+        <p>{{ _('No changes to settings will be stored and are lost after rebooting. This mode should only be used to install a firmware upgrade') }}</p>
+        {% if (dispatcher.lookup("admin/system/flash")): %}
+        <div class="right"><a class="btn" href="{{ dispatcher.build_url("admin/system/flash") }}">{{ _('Go to firmware upgrade...') }}</a></div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+    <noscript>
+      <div class="neovpn-content__notice">
+        <div class="alert-message warning">
+          <h4>{{ _('JavaScript required!') }}</h4>
+          <p>{{ _('You must enable JavaScript in your browser or LuCI will not work properly.') }}</p>
+        </div>
+      </div>
+    </noscript>
+    {% endif %}

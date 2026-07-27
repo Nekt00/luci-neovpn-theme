@@ -1,0 +1,11 @@
+{
+  "id": "ssclash",
+  "name": "SSClash",
+  "subtitle": "Mihomo",
+  "service": "clash",
+  "backend": "Mihomo",
+  "packages": ["luci-app-ssclash"],
+  "paths": ["/etc/init.d/clash", "/opt/clash"],
+  "binaries": ["mihomo", "clash", "/opt/clash/mihomo", "/opt/clash/clash"],
+  "ui": "luci-app-ssclash"
+}

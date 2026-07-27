@@ -1,0 +1,24 @@
+.DS_Store
+Thumbs.db
+
+# Build outputs
+/dist/*
+!/dist/.gitkeep
+*.ipk
+*.tar.gz
+*.tar
+*.sha256
+
+# Local development and validation workspaces
+/.stage*/
+/.login-logo-fix/
+/.cbi-map*
+/.td,
+*.log
+*.tmp
+
+# Editor metadata
+.idea/
+.vscode/
+*.swp
+*.swo

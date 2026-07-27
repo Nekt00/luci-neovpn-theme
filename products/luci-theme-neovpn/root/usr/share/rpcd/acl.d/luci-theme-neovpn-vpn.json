@@ -1,0 +1,10 @@
+{
+  "luci-theme-neovpn-vpn": {
+    "description": "Read NeoVPN supported VPN provider status",
+    "read": {
+      "ubus": {
+        "neovpn.vpn": [ "status" ]
+      }
+    }
+  }
+}

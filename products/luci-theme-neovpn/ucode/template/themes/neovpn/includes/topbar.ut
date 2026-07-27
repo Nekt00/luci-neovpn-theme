@@ -1,0 +1,20 @@
+<header class="neovpn-header">
+  <button class="neovpn-header__menu" type="button" aria-controls="neovpn-sidebar" aria-expanded="false" aria-label="{{ _('Open navigation') }}">
+    <span class="neovpn-header__menu-label">{{ _('Menu') }}</span>
+  </button>
+  <a class="neovpn-header__brand" href="{{ dispatcher.build_url() }}" aria-label="{{ _('NeoVPN') }}">
+    <img class="neovpn-header__brand-mark" src="{{ media }}/img/logo-neovpn.png" alt="" aria-hidden="true">
+    <span class="neovpn-header__brand-name">{{ _('NeoVPN') }}</span>
+  </a>
+  <nav class="neovpn-header__nav" aria-label="{{ _('Main sections') }}">
+    <ul class="neovpn-root-menu" id="rootmenu"></ul>
+  </nav>
+  <div class="neovpn-header__title">
+    <span class="neovpn-header__crumb">{{ length(route_segments ?? []) > 1 ? _(route_segments[1]) : _('NeoVPN') }}</span>
+    <span class="neovpn-header__page">{{ dispatched?.title ? _(dispatched.title) : _('NeoVPN') }}</span>
+  </div>
+  <div class="neovpn-header__actions">
+    <div class="neovpn-header__host">{{ boardinfo?.hostname ?? _('Router') }}</div>
+    <ul class="neovpn-mode-menu" id="modemenu"></ul>
+  </div>
+</header>

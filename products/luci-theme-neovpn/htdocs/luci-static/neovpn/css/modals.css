@@ -1,0 +1,340 @@
+.neovpn-theme #modal_overlay {
+  display: none;
+}
+
+.neovpn-theme.modal-overlay-active {
+  overflow: hidden;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: 16px;
+  overflow: hidden;
+  background: var(--neovpn-surface-overlay);
+  z-index: 1200;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) {
+  --neovpn-modal-label-inset: 0.875rem;
+  --neovpn-modal-field-width: 360px;
+  position: relative;
+  inset: auto;
+  transform: none;
+  display: flex;
+  flex-direction: column;
+  width: min(720px, calc(100vw - 32px));
+  max-width: 100%;
+  max-height: calc(100dvh - 32px);
+  min-height: 0;
+  margin: 0;
+  padding: 1.25rem 1.25rem 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 1px solid var(--neovpn-component-panel-border);
+  border-radius: var(--neovpn-radius-panel);
+  background: var(--neovpn-component-panel-bg);
+  color: var(--neovpn-text-primary);
+  box-shadow: var(--neovpn-component-panel-shadow);
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty):has(> .cbi-map),
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty):has(> .table),
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty):has(> table) {
+  width: min(900px, calc(100vw - 32px));
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty)::before {
+  content: none;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > h4 {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0 2.75rem 0.875rem 0;
+  border-bottom: 1px solid var(--neovpn-component-section-border);
+  font-size: 1.0625rem;
+  font-weight: var(--neovpn-font-weight-semibold);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > p {
+  flex: 0 0 auto;
+  margin: 1rem 0 0;
+  color: var(--neovpn-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > :is(
+  .cbi-map,
+  .cbi-modal-body,
+  .modal-body,
+  ul,
+  ol,
+  pre,
+  .table,
+  table
+) {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 1rem 0 0;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: auto;
+  max-height: calc(100dvh - 11rem);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overscroll-behavior: contain;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map {
+  scrollbar-gutter: stable;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > :is(ul, ol) {
+  padding-inline-start: 1.25rem;
+  scrollbar-gutter: stable;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > :is(ul, ol) > li {
+  padding: 0.125rem 0.25rem 0.125rem 0;
+  line-height: 1.45;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > :is(ul, ol) :is(span, small, em) {
+  line-height: inherit;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > :is(ul, ol) :is(.label, .badge, .tag) {
+  min-height: 1.5rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.25;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > div:not(.right):not(.button-row):not([style*="display:flex"]) {
+  flex: 0 0 auto;
+  min-height: 0;
+  margin-top: 1rem;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map > .cbi-section,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map > .cbi-section-node,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map > .cbi-tabcontainer,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map > .cbi-value-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value {
+  display: grid;
+  grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5rem 0.875rem;
+  padding: 0.75rem 0;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-title {
+  align-self: center;
+  min-width: 0;
+  margin: 0;
+  padding-inline-start: var(--neovpn-modal-label-inset);
+  line-height: 1.25;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field > .cbi-value-description {
+  flex: 1 1 100%;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-dynlist,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-dynlist > .add-item.control-group,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .add-item.control-group {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="text"],
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="password"],
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="number"],
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="search"],
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="url"],
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="email"],
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map select,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field > .cbi-dropdown {
+  inline-size: var(--neovpn-modal-field-width) !important;
+  width: var(--neovpn-modal-field-width) !important;
+  min-inline-size: var(--neovpn-modal-field-width) !important;
+  max-inline-size: 100%;
+  max-width: 100%;
+  min-width: var(--neovpn-modal-field-width) !important;
+  flex: 0 1 var(--neovpn-modal-field-width);
+  margin-inline: 0;
+  box-sizing: border-box;
+  outline: 0 solid transparent;
+  outline-offset: 0;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map :is(textarea, pre, .cbi-dynlist, .cbi-value-fieldset, input[type="file"]) {
+  width: 100%;
+  max-width: 100%;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field:focus-within input[type="text"],
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field:focus-within input[type="password"],
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field:focus-within input[type="number"],
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field:focus-within input[type="search"],
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field:focus-within input[type="url"],
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field:focus-within input[type="email"],
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field:focus-within select,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-value-field:focus-within textarea,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-dropdown li[unselectable] form:focus-within > .create-item-input,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="text"]:focus,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="text"]:focus-visible,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="password"]:focus,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="password"]:focus-visible,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="number"]:focus,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="number"]:focus-visible,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="search"]:focus,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="search"]:focus-visible,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="url"]:focus,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="url"]:focus-visible,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="email"]:focus,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map input[type="email"]:focus-visible,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map select:focus,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map select:focus-visible,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map textarea:focus,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map textarea:focus-visible,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .create-item-input:focus,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .create-item-input:focus-visible {
+  outline: 0 solid transparent;
+  outline-offset: 0;
+  border-color: var(--neovpn-border-focus);
+  box-shadow: 0 0 0 var(--neovpn-focus-ring-width) var(--neovpn-focus-ring-color);
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-section h3,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-map h2,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .cbi-map .cbi-map h3 {
+  margin-bottom: 0.625rem;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > :is(.close, .modal-close, button[aria-label="Close"], button[title="Close"]) {
+  position: absolute;
+  top: 0.875rem;
+  right: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid var(--neovpn-border-default);
+  border-radius: 0.75rem;
+  background: var(--neovpn-control-bg);
+  color: var(--neovpn-text-primary);
+  opacity: 1;
+  visibility: visible;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > :is(.close, .modal-close, button[aria-label="Close"], button[title="Close"]):is(:hover, :focus-visible) {
+  border-color: var(--neovpn-control-border-hover);
+  background: rgba(72, 211, 228, 0.1);
+  outline: 0;
+  box-shadow: 0 0 0 var(--neovpn-focus-ring-width) var(--neovpn-focus-ring-color);
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .button-row,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > .right,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > div[style*="display:flex"] {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin: 1rem -1.25rem 0;
+  padding: 0.75rem;
+  box-sizing: border-box;
+  border-top: 1px solid var(--neovpn-border-subtle);
+  background: linear-gradient(180deg, rgba(9, 14, 24, 0.98) 0%, rgba(7, 10, 18, 0.99) 100%);
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > div[style*="display:flex"] > .left,
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > div[style*="display:flex"] > .right {
+  display: flex;
+  flex: 1 1 12rem;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay > .modal[role="dialog"]:not(:empty) > div[style*="display:flex"] > .right {
+  justify-content: flex-end;
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay .cbi-dropdown[open] > ul.dropdown {
+  z-index: 20;
+  max-width: min(28rem, calc(100vw - 4rem));
+  max-height: min(16rem, calc(100vh - 12rem));
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--neovpn-space-2);
+  min-height: 2.5rem;
+  padding: 0 0.95rem;
+  border: 1px solid var(--neovpn-control-border);
+  border-radius: 0.75rem;
+  background: var(--neovpn-control-bg);
+  color: var(--neovpn-text-primary);
+  font: inherit;
+  white-space: nowrap;
+  box-shadow: var(--neovpn-control-highlight), var(--neovpn-control-ring), 0 12px 24px rgba(5, 8, 15, 0.14);
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay .btn:hover {
+  border-color: var(--neovpn-control-border-hover);
+  background: var(--neovpn-control-bg-hover);
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay .btn.cbi-button-action {
+  border-color: var(--neovpn-button-primary-border);
+  background: var(--neovpn-button-primary-bg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 12px 22px rgba(13, 66, 68, 0.16);
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay .btn.cbi-button-action:hover {
+  background: var(--neovpn-button-primary-hover);
+}
+
+.neovpn-theme.modal-overlay-active #modal_overlay .btn[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

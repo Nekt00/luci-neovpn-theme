@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version, for example v1.0.0-rc1'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate repository
+        run: ./scripts/validate.sh
+
+      - name: Build IPK
+        run: ./scripts/build-ipk.sh
+
+      - name: Release check
+        run: ./scripts/release-check.sh
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-rc') }}
+          name: NeoVPN ${{ github.ref_name }}
+          files: |
+            dist/SHA256SUMS
+            dist/luci-theme-neovpn_all.ipk
+            dist/luci-theme-neovpn_all.ipk.sha256
+            dist/luci-theme-neovpn_*.ipk
+            dist/luci-theme-neovpn_*.ipk.sha256
+            dist/install.sh
+            dist/install.sh.sha256
+            dist/uninstall.sh
+            dist/uninstall.sh.sha256

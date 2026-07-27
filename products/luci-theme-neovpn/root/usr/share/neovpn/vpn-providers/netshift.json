@@ -1,0 +1,9 @@
+{
+  "id": "netshift",
+  "name": "NetShift",
+  "service": "netshift",
+  "backend": "sing-box",
+  "packages": ["netshift", "luci-app-netshift"],
+  "paths": ["/etc/init.d/netshift", "/etc/config/netshift", "/usr/bin/netshift"],
+  "ui": "luci-app-netshift"
+}

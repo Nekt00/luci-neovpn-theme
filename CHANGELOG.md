@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.0-rc2] - 2026-07-27
+
+- Fixed Linux CI compatibility in `scripts/release-check.sh` by avoiding `tar | grep -q` pipelines under `pipefail`.
+- Kept release asset structure unchanged for GitHub Releases.
+
 ## [1.0.0-rc1] - 2026-07-27
 
 - Initial release candidate for the NeoVPN LuCI theme.

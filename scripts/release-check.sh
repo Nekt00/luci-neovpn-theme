@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST="$ROOT/dist"
-IPK="$DIST/luci-theme-neovpn_1.0.0-rc1_all.ipk"
+IPK="$DIST/luci-theme-neovpn_1.0.0-rc2_all.ipk"
 STABLE="$DIST/luci-theme-neovpn_all.ipk"
 
 fail() {
@@ -22,9 +22,9 @@ else
 fi
 
 members="$(ar -t "$IPK")"
-printf '%s\n' "$members" | grep -qx 'debian-binary' || fail "missing debian-binary"
-printf '%s\n' "$members" | grep -qx 'control.tar.gz' || fail "missing control.tar.gz"
-printf '%s\n' "$members" | grep -qx 'data.tar.gz' || fail "missing data.tar.gz"
+grep -qx 'debian-binary' <<< "$members" || fail "missing debian-binary"
+grep -qx 'control.tar.gz' <<< "$members" || fail "missing control.tar.gz"
+grep -qx 'data.tar.gz' <<< "$members" || fail "missing data.tar.gz"
 
 tmp="$(mktemp -d "${TMPDIR:-/tmp}/neovpn-release-check.XXXXXX")"
 trap 'rm -rf "$tmp"' EXIT
@@ -33,20 +33,22 @@ cp "$IPK" "$tmp/"
 (cd "$tmp" && ar -x "$(basename "$IPK")")
 
 control="$(tar -xOzf "$tmp/control.tar.gz" ./control)"
-printf '%s\n' "$control" | grep -q '^Package: luci-theme-neovpn$' || fail "invalid package name"
-printf '%s\n' "$control" | grep -q '^Version: 1.0.0-rc1$' || fail "invalid package version"
-printf '%s\n' "$control" | grep -q '^Architecture: all$' || fail "invalid package architecture"
-printf '%s\n' "$control" | grep -q '^Depends: luci-base$' || fail "invalid dependencies"
+grep -qx 'Package: luci-theme-neovpn' <<< "$control" || fail "invalid package name"
+grep -qx 'Version: 1.0.0-rc2' <<< "$control" || fail "invalid package version"
+grep -qx 'Architecture: all' <<< "$control" || fail "invalid package architecture"
+grep -qx 'Depends: luci-base' <<< "$control" || fail "invalid dependencies"
 
-tar -tzf "$tmp/data.tar.gz" | grep -q '^./www/luci-static/neovpn/css/pages.css$' || fail "theme CSS missing"
-tar -tzf "$tmp/data.tar.gz" | grep -q '^./usr/share/ucode/luci/template/themes/neovpn/header.ut$' || fail "theme header missing"
-tar -tzf "$tmp/data.tar.gz" | grep -q '^./etc/uci-defaults/30_luci-theme-neovpn$' || fail "uci-defaults missing"
+tar -tzf "$tmp/data.tar.gz" > "$tmp/data-members.txt"
 
-if tar -tzf "$tmp/data.tar.gz" | grep -E '(^|/)(\\.DS_Store|validation|stage|staging)(/|$)' >/dev/null; then
+grep -qx './www/luci-static/neovpn/css/pages.css' "$tmp/data-members.txt" || fail "theme CSS missing"
+grep -qx './usr/share/ucode/luci/template/themes/neovpn/header.ut' "$tmp/data-members.txt" || fail "theme header missing"
+grep -qx './etc/uci-defaults/30_luci-theme-neovpn' "$tmp/data-members.txt" || fail "uci-defaults missing"
+
+if grep -E '(^|/)(\.DS_Store|validation|stage|staging)(/|$)' "$tmp/data-members.txt" >/dev/null; then
 	fail "development artifact found in IPK"
 fi
 
-if tar -tzf "$tmp/data.tar.gz" | grep -E '/(Users|home|private/var)/' >/dev/null; then
+if grep -E '/(Users|home|private/var)/' "$tmp/data-members.txt" >/dev/null; then
 	fail "absolute local workstation path found in IPK"
 fi
 

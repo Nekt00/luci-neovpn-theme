@@ -36,7 +36,7 @@ fi
 
 grep -q 'PKG_NAME:=luci-theme-neovpn' "$product/Makefile" || fail "package name is not luci-theme-neovpn"
 grep -q 'PKG_VERSION:=1.0.0' "$product/Makefile" || fail "package version is not 1.0.0"
-grep -q 'PKG_RELEASE:=rc1' "$product/Makefile" || fail "package release is not rc1"
+grep -q 'PKG_RELEASE:=rc2' "$product/Makefile" || fail "package release is not rc2"
 grep -q 'LUCI_DEPENDS:=+luci-base' "$product/Makefile" || fail "luci-base dependency is missing"
 grep -q 'LUCI_PKGARCH:=all' "$product/Makefile" || fail "LUCI_PKGARCH is not all"
 

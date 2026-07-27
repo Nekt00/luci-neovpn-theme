@@ -6,9 +6,9 @@ The production package is located in `products/luci-theme-neovpn`.
 
 ## Project Status
 
-Current release: `v1.0.0-rc1`.
+Current release: `v1.0.0-rc2`.
 
-This is the first release candidate. The visual implementation is feature complete, while package installation should be validated on additional OpenWrt 25.x targets before a final `v1.0.0`.
+This is the second release candidate. The visual implementation is feature complete, while package installation should be validated on additional OpenWrt 25.x targets before a final `v1.0.0`.
 
 ## Supported OpenWrt Versions
 
@@ -125,7 +125,7 @@ uci commit luci
 1. Run `make release-check`.
 2. Commit the source tree.
 3. Push `main`.
-4. Create and push tag `v1.0.0-rc1`.
+4. Create and push tag `v1.0.0-rc2`.
 5. GitHub Actions builds the IPK and publishes release assets.
 
 ## Screenshots

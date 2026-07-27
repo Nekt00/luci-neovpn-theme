@@ -6,20 +6,21 @@ The production package is located in `products/luci-theme-neovpn`.
 
 ## Project Status
 
-Current release: `v1.0.0-rc2`.
+Current release: `v1.0.0-rc3`.
 
-This is the second release candidate. The visual implementation is feature complete, while package installation should be validated on additional OpenWrt 25.x targets before a final `v1.0.0`.
+This is the third release candidate. The visual implementation is feature complete, while APK installation should be validated on additional OpenWrt 25.x targets before a final `v1.0.0`.
 
 ## Supported OpenWrt Versions
 
-- Tested: OpenWrt 25.x with LuCI ucode themes on the development router used during theme validation.
-- Expected: other OpenWrt 25.x targets with `luci-base`.
-- Not claimed: older Lua-only LuCI theme stacks.
+- Tested target family: OpenWrt 25.x with LuCI ucode themes and the `apk` package manager.
+- Current target branch: OpenWrt 25.12.
+- Expected: other OpenWrt 25.x targets with `apk` and `luci-base`.
+- Not supported: OpenWrt 24.10 and older, `opkg`, or IPK installation.
 
 Prerequisites:
 
 - root shell access on the router
-- `opkg`
+- `apk`
 - `wget` or `curl`
 - installed LuCI
 
@@ -27,7 +28,7 @@ Architecture: `all`.
 
 ## Installation
 
-Install the latest GitHub Release directly on the router:
+Install the latest stable GitHub Release directly on the router after `v1.0.0` is published:
 
 ```sh
 sh -c "$(wget -O- https://raw.githubusercontent.com/Nekt00/luci-neovpn-theme/main/install.sh)"
@@ -39,20 +40,27 @@ If `wget` is unavailable but `curl` is installed:
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/Nekt00/luci-neovpn-theme/main/install.sh)"
 ```
 
-The installer verifies OpenWrt, LuCI, root permissions, the release checksum, installs the IPK, activates NeoVPN, clears LuCI cache, and restarts `uhttpd`.
+The installer verifies OpenWrt 25.x, LuCI, root permissions, `apk`, the release checksum, installs the APK, activates NeoVPN, clears LuCI cache, and restarts `uhttpd`.
+
+For prerelease `v1.0.0-rc3`, use an explicit release URL because GitHub `latest` does not point to prereleases:
+
+```sh
+NEOVPN_RELEASE_URL="https://github.com/Nekt00/luci-neovpn-theme/releases/download/v1.0.0-rc3" \
+sh -c "$(wget -O- https://raw.githubusercontent.com/Nekt00/luci-neovpn-theme/main/install.sh)"
+```
 
 ## Manual Installation
 
 Download these assets from the latest release:
 
-- `luci-theme-neovpn_all.ipk`
+- `luci-theme-neovpn_all.apk`
 - `SHA256SUMS`
 
 Then run:
 
 ```sh
 sha256sum -c SHA256SUMS
-opkg install ./luci-theme-neovpn_all.ipk
+apk add --allow-untrusted ./luci-theme-neovpn_all.apk
 uci set luci.themes.NeoVPN='/luci-static/neovpn'
 uci set luci.main.mediaurlbase='/luci-static/neovpn'
 uci commit luci
@@ -65,6 +73,7 @@ rm -rf /tmp/luci-indexcache /tmp/luci-modulecache/*
 Run the installer again:
 
 ```sh
+NEOVPN_RELEASE_URL="https://github.com/Nekt00/luci-neovpn-theme/releases/download/v1.0.0-rc3" \
 sh -c "$(wget -O- https://raw.githubusercontent.com/Nekt00/luci-neovpn-theme/main/install.sh)"
 ```
 
@@ -80,20 +89,20 @@ Manual uninstall:
 uci set luci.main.mediaurlbase='/luci-static/bootstrap'
 uci -q delete luci.themes.NeoVPN
 uci commit luci
-opkg remove luci-theme-neovpn
+apk del luci-theme-neovpn
 rm -rf /tmp/luci-indexcache /tmp/luci-modulecache/*
 /etc/init.d/uhttpd restart
 ```
 
 ## Build
 
-Build release assets locally on macOS or Linux:
+Build release assets with the pinned OpenWrt 25.12.4 SDK:
 
 ```sh
 make build
 ```
 
-Generated assets are written to `dist/`.
+The SDK build runs on Linux and writes generated APK assets to `dist/`.
 
 Run the complete release checks:
 
@@ -125,8 +134,8 @@ uci commit luci
 1. Run `make release-check`.
 2. Commit the source tree.
 3. Push `main`.
-4. Create and push tag `v1.0.0-rc2`.
-5. GitHub Actions builds the IPK and publishes release assets.
+4. Create and push tag `v1.0.0-rc3`.
+5. GitHub Actions builds the APK with the pinned OpenWrt 25.12.4 SDK and publishes release assets.
 
 ## Screenshots
 

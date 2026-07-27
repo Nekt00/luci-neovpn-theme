@@ -4,7 +4,7 @@ set -eu
 REPO="${NEOVPN_REPO:-Nekt00/luci-neovpn-theme}"
 BASE_URL="${NEOVPN_RELEASE_URL:-https://github.com/$REPO/releases/latest/download}"
 PACKAGE="luci-theme-neovpn"
-IPK_ASSET="${PACKAGE}_all.ipk"
+APK_ASSET="${PACKAGE}_all.apk"
 SHA_ASSET="SHA256SUMS"
 THEME_NAME="NeoVPN"
 THEME_PATH="/luci-static/neovpn"
@@ -57,25 +57,20 @@ restart_uhttpd() {
 [ "$(id -u)" = 0 ] || fail "run this script as root"
 [ -r /etc/openwrt_release ] || fail "this does not look like OpenWrt"
 command -v uci >/dev/null 2>&1 || fail "uci is required"
-command -v opkg >/dev/null 2>&1 || fail "opkg is required for IPK installation"
+command -v apk >/dev/null 2>&1 || fail "apk is required; NeoVPN supports OpenWrt 25.x apk systems only"
 
 . /etc/openwrt_release
 release="${DISTRIB_RELEASE:-unknown}"
 case "$release" in
-	25.*|SNAPSHOT) ;;
-	*)
-		if [ "${NEOVPN_ALLOW_UNSUPPORTED:-0}" != 1 ]; then
-			fail "OpenWrt $release is not in the supported 25.x target range. Set NEOVPN_ALLOW_UNSUPPORTED=1 to override."
-		fi
-		;;
+	25.*) ;;
+	*) fail "OpenWrt $release is not supported. NeoVPN requires OpenWrt 25.x with apk." ;;
 esac
 
-if ! opkg status luci-base >/dev/null 2>&1 && [ ! -d /usr/share/ucode/luci ]; then
+if ! apk info -e luci-base >/dev/null 2>&1 && [ ! -d /usr/share/ucode/luci ]; then
 	fail "LuCI/luci-base was not found"
 fi
 
-tmp="${TMPDIR:-/tmp}/neovpn-install.$$"
-mkdir -p "$tmp"
+tmp="$(mktemp -d "${TMPDIR:-/tmp}/neovpn-install.XXXXXX")"
 trap 'rm -rf "$tmp"' EXIT
 
 old_theme="$(uci -q get luci.main.mediaurlbase || printf '%s' "$BOOTSTRAP_PATH")"
@@ -86,7 +81,6 @@ rollback() {
 		log "Rolling back theme selection..."
 		uci set "luci.main.mediaurlbase=$old_theme" >/dev/null 2>&1 || true
 		uci commit luci >/dev/null 2>&1 || true
-		opkg remove "$PACKAGE" >/dev/null 2>&1 || true
 		clear_luci_cache
 		restart_uhttpd
 	fi
@@ -95,16 +89,18 @@ rollback() {
 trap 'rollback; rm -rf "$tmp"' EXIT
 
 log "Downloading NeoVPN release assets..."
-download "$BASE_URL/$IPK_ASSET" "$tmp/$IPK_ASSET"
+download "$BASE_URL/$APK_ASSET" "$tmp/$APK_ASSET"
 download "$BASE_URL/$SHA_ASSET" "$tmp/$SHA_ASSET"
 
-expected="$(awk -v asset="$IPK_ASSET" '$2 == asset {print $1}' "$tmp/$SHA_ASSET" | head -n 1)"
-[ -n "$expected" ] || fail "$IPK_ASSET checksum not found in $SHA_ASSET"
-actual="$(sha256_file "$tmp/$IPK_ASSET")"
+expected="$(awk -v asset="$APK_ASSET" '$2 == asset {print $1}' "$tmp/$SHA_ASSET" | head -n 1)"
+[ -n "$expected" ] || fail "$APK_ASSET checksum not found in $SHA_ASSET"
+actual="$(sha256_file "$tmp/$APK_ASSET")"
 [ "$expected" = "$actual" ] || fail "SHA256 mismatch"
 
 log "Installing $PACKAGE..."
-opkg install "$tmp/$IPK_ASSET" || fail "opkg install failed"
+apk add --allow-untrusted "$tmp/$APK_ASSET" || fail "apk add failed"
+
+apk info -e "$PACKAGE" >/dev/null 2>&1 || fail "package verification failed after install"
 
 uci set "luci.themes.$THEME_NAME=$THEME_PATH"
 uci set "luci.main.mediaurlbase=$THEME_PATH"
@@ -112,8 +108,6 @@ uci commit luci
 
 clear_luci_cache
 restart_uhttpd
-
-opkg status "$PACKAGE" >/dev/null 2>&1 || fail "package verification failed after install"
 
 installed=1
 trap 'rm -rf "$tmp"' EXIT

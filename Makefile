@@ -1,9 +1,9 @@
-VERSION ?= 1.0.0-rc2
+VERSION ?= 1.0.0-rc3
 
-.PHONY: build validate clean
+.PHONY: build validate release-check clean
 
 build:
-	./scripts/build-ipk.sh
+	./scripts/build-apk.sh
 
 validate:
 	./scripts/validate.sh

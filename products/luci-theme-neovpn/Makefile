@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-theme-neovpn
 PKG_VERSION:=1.0.0
-PKG_RELEASE:=rc2
+PKG_RELEASE:=rc3
 PKG_LICENSE:=Apache-2.0
 PKG_MAINTAINER:=Nekt00 <noreply@github.com>
 PKGARCH:=all
@@ -19,12 +19,12 @@ endef
 
 define Package/luci-theme-neovpn/postrm
 #!/bin/sh
-[ -n "$${IPKG_INSTROOT}" ] || {
+if command -v uci >/dev/null 2>&1; then
 	uci -q delete luci.themes.NeoVPN
 	uci commit luci
-}
+fi
 endef
 
-include ../../luci.mk
+include $(TOPDIR)/feeds/luci/luci.mk
 
 # call BuildPackage - OpenWrt buildroot signature

@@ -17,7 +17,7 @@ fail() {
 [ -f "$product/Makefile" ] || fail "product Makefile is missing"
 [ -x "$root/install.sh" ] || fail "install.sh must be executable"
 [ -x "$root/uninstall.sh" ] || fail "uninstall.sh must be executable"
-[ -x "$root/scripts/build-ipk.sh" ] || fail "scripts/build-ipk.sh must be executable"
+[ -x "$root/scripts/build-apk.sh" ] || fail "scripts/build-apk.sh must be executable"
 [ -x "$root/scripts/release-check.sh" ] || fail "scripts/release-check.sh must be executable"
 
 [ -d "$product/htdocs/luci-static/neovpn/css" ] || fail "theme CSS directory is missing"
@@ -36,8 +36,9 @@ fi
 
 grep -q 'PKG_NAME:=luci-theme-neovpn' "$product/Makefile" || fail "package name is not luci-theme-neovpn"
 grep -q 'PKG_VERSION:=1.0.0' "$product/Makefile" || fail "package version is not 1.0.0"
-grep -q 'PKG_RELEASE:=rc2' "$product/Makefile" || fail "package release is not rc2"
+grep -q 'PKG_RELEASE:=rc3' "$product/Makefile" || fail "package release is not rc3"
 grep -q 'LUCI_DEPENDS:=+luci-base' "$product/Makefile" || fail "luci-base dependency is missing"
 grep -q 'LUCI_PKGARCH:=all' "$product/Makefile" || fail "LUCI_PKGARCH is not all"
+grep -q 'feeds/luci/luci.mk' "$product/Makefile" || fail "SDK-compatible luci.mk include is missing"
 
 printf '%s\n' "validate: OK"

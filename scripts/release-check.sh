@@ -3,16 +3,31 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST="$ROOT/dist"
-IPK="$DIST/luci-theme-neovpn_1.0.0-rc2_all.ipk"
-STABLE="$DIST/luci-theme-neovpn_all.ipk"
+PKG_NAME="luci-theme-neovpn"
+VERSION="1.0.0-rc3"
+ARCH="all"
+APK="$DIST/${PKG_NAME}_${VERSION}_${ARCH}.apk"
+STABLE="$DIST/${PKG_NAME}_${ARCH}.apk"
 
 fail() {
 	printf 'release-check: %s\n' "$*" >&2
 	exit 1
 }
 
-[ -f "$IPK" ] || fail "versioned IPK is missing"
-[ -f "$STABLE" ] || fail "stable IPK is missing"
+apk_tool="${OPENWRT_APK:-}"
+if [ -z "$apk_tool" ]; then
+	if [ -x "$DIST/openwrt-apk" ]; then
+		apk_tool="$DIST/openwrt-apk"
+	elif command -v apk >/dev/null 2>&1; then
+		apk_tool="$(command -v apk)"
+	else
+		fail "apk tool is required. Set OPENWRT_APK to the SDK apk binary."
+	fi
+fi
+
+[ -x "$apk_tool" ] || fail "apk tool is not executable: $apk_tool"
+[ -f "$APK" ] || fail "versioned APK is missing"
+[ -f "$STABLE" ] || fail "stable APK is missing"
 [ -f "$DIST/SHA256SUMS" ] || fail "SHA256SUMS is missing"
 
 if command -v sha256sum >/dev/null 2>&1; then
@@ -21,35 +36,38 @@ else
 	(cd "$DIST" && shasum -a 256 -c SHA256SUMS)
 fi
 
-members="$(ar -t "$IPK")"
-grep -qx 'debian-binary' <<< "$members" || fail "missing debian-binary"
-grep -qx 'control.tar.gz' <<< "$members" || fail "missing control.tar.gz"
-grep -qx 'data.tar.gz' <<< "$members" || fail "missing data.tar.gz"
-
-tmp="$(mktemp -d "${TMPDIR:-/tmp}/neovpn-release-check.XXXXXX")"
+tmp="$(mktemp -d "${TMPDIR:-/tmp}/neovpn-apk-check.XXXXXX")"
 trap 'rm -rf "$tmp"' EXIT
+rootfs="$tmp/root"
+mkdir -p "$rootfs"
 
-cp "$IPK" "$tmp/"
-(cd "$tmp" && ar -x "$(basename "$IPK")")
+"$apk_tool" add --root "$rootfs" --initdb --allow-untrusted --no-scripts --force-broken-world "$APK" >/dev/null
+"$apk_tool" info --root "$rootfs" "$PKG_NAME" >/dev/null || fail "package is not registered in apk database"
 
-control="$(tar -xOzf "$tmp/control.tar.gz" ./control)"
-grep -qx 'Package: luci-theme-neovpn' <<< "$control" || fail "invalid package name"
-grep -qx 'Version: 1.0.0-rc2' <<< "$control" || fail "invalid package version"
-grep -qx 'Architecture: all' <<< "$control" || fail "invalid package architecture"
-grep -qx 'Depends: luci-base' <<< "$control" || fail "invalid dependencies"
+"$apk_tool" info --root "$rootfs" -e "$PKG_NAME" >/dev/null || fail "package existence check failed"
+"$apk_tool" info --root "$rootfs" -L "$PKG_NAME" > "$tmp/files.txt"
+"$apk_tool" info --root "$rootfs" -d "$PKG_NAME" > "$tmp/deps.txt"
+"$apk_tool" info --root "$rootfs" -v "$PKG_NAME" > "$tmp/version.txt"
 
-tar -tzf "$tmp/data.tar.gz" > "$tmp/data-members.txt"
+grep -Eq "^${PKG_NAME}-(1\\.0\\.0-rc3|1\\.0\\.0-rcrc3)$" "$tmp/version.txt" || fail "invalid package version"
+grep -qx 'usr/share/ucode/luci/template/themes/neovpn/header.ut' "$tmp/files.txt" || fail "theme header missing"
+grep -qx 'www/luci-static/neovpn/css/pages.css' "$tmp/files.txt" || fail "theme CSS missing"
+grep -qx 'etc/uci-defaults/30_luci-theme-neovpn' "$tmp/files.txt" || fail "uci-defaults missing"
+grep -Eq '^luci-base($|[<>=~])' "$tmp/deps.txt" || fail "luci-base dependency missing"
 
-grep -qx './www/luci-static/neovpn/css/pages.css' "$tmp/data-members.txt" || fail "theme CSS missing"
-grep -qx './usr/share/ucode/luci/template/themes/neovpn/header.ut' "$tmp/data-members.txt" || fail "theme header missing"
-grep -qx './etc/uci-defaults/30_luci-theme-neovpn' "$tmp/data-members.txt" || fail "uci-defaults missing"
-
-if grep -E '(^|/)(\.DS_Store|validation|stage|staging)(/|$)' "$tmp/data-members.txt" >/dev/null; then
-	fail "development artifact found in IPK"
+if grep -E '(^|/)(\.DS_Store|validation|stage|staging)(/|$)' "$tmp/files.txt" >/dev/null; then
+	fail "development artifact found in APK"
 fi
 
-if grep -E '/(Users|home|private/var)/' "$tmp/data-members.txt" >/dev/null; then
-	fail "absolute local workstation path found in IPK"
+if grep -E '/(Users|home|private/var)/' "$tmp/files.txt" >/dev/null; then
+	fail "absolute local workstation path found in APK"
+fi
+
+if ! "$apk_tool" manifest "$APK" > "$tmp/manifest.txt" 2>/dev/null; then
+	"$apk_tool" info --contents --allow-untrusted "$APK" > "$tmp/manifest.txt" 2>/dev/null || true
+fi
+if grep -E 'arch[=: ][[:space:]]*[^[:space:]]+' "$tmp/manifest.txt" | grep -vq 'all'; then
+	fail "APK architecture is not all"
 fi
 
 printf '%s\n' "release-check: OK"

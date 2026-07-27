@@ -130,13 +130,7 @@ uci commit luci
 
 ## Screenshots
 
-![Login desktop](screenshots/login-desktop.png)
-
-![Overview desktop](screenshots/overview-desktop.png)
-
-![Software](screenshots/software.png)
-
-![LED configuration](screenshots/led-configuration.png)
+Screenshots are intentionally not stored in the source repository. Release notes may include external preview images when needed.
 
 ## License
 

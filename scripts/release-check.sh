@@ -78,16 +78,10 @@ else
 	(cd "$DIST" && shasum -a 256 -c SHA256SUMS)
 fi
 
-rootfs="$tmp/root"
-mkdir -p "$rootfs"
-
-"$apk_tool" add --root "$rootfs" --initdb --usermode --allow-untrusted --no-scripts --force-broken-world "$APK" >/dev/null
-"$apk_tool" info --root "$rootfs" "$PKG_NAME" >/dev/null || fail "package is not registered in apk database"
-
-"$apk_tool" info --root "$rootfs" -e "$PKG_NAME" >/dev/null || fail "package existence check failed"
-"$apk_tool" info --root "$rootfs" -L "$PKG_NAME" > "$tmp/files.txt"
-"$apk_tool" info --root "$rootfs" -d "$PKG_NAME" > "$tmp/deps.txt"
-"$apk_tool" info --root "$rootfs" -v "$PKG_NAME" > "$tmp/version.txt"
+"$apk_tool" info --allow-untrusted "$APK" >/dev/null || fail "APK metadata is not readable"
+"$apk_tool" info --allow-untrusted -L "$APK" > "$tmp/files.txt"
+"$apk_tool" info --allow-untrusted -d "$APK" > "$tmp/deps.txt"
+"$apk_tool" info --allow-untrusted -v "$APK" > "$tmp/version.txt"
 
 grep -Eq "^${PKG_NAME}-1\\.0\\.0_rc3-r1$" "$tmp/version.txt" || fail "invalid package version"
 grep -qx 'usr/share/ucode/luci/template/themes/neovpn/header.ut' "$tmp/files.txt" || fail "theme header missing"

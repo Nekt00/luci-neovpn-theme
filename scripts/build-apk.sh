@@ -94,11 +94,6 @@ cp -R "$PRODUCT/." "$sdk_dir/package/$PKG_NAME/"
 
 sdk_apk="$sdk_dir/staging_dir/host/bin/apk"
 [ -x "$sdk_apk" ] || fail "SDK apk tool was not found"
-rm -rf "$DIST/openwrt-sdk-host" "$DIST/openwrt-apk"
-mkdir -p "$DIST/openwrt-sdk-host"
-cp -RL "$sdk_dir/staging_dir/host/bin" "$DIST/openwrt-sdk-host/bin"
-cp -RL "$sdk_dir/staging_dir/host/lib" "$DIST/openwrt-sdk-host/lib"
-chmod 0755 "$DIST/openwrt-sdk-host/bin/apk"
 
 built_apk="$(find "$sdk_dir/bin" -type f -name "${PKG_NAME}*.apk" -print -quit)"
 [ -n "$built_apk" ] || fail "APK was not produced"

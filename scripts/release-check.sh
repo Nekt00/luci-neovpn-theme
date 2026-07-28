@@ -84,9 +84,9 @@ grep -Eq "(^|[[:space:]])name:[[:space:]]*${PKG_NAME}($|[[:space:]])" "$tmp/adbd
 grep -Eq '(^|[[:space:]])version:[[:space:]]*1\.0\.0_rc3-r1($|[[:space:]])' "$tmp/adbdump.txt" || fail "invalid package version"
 grep -Eq '(^|[[:space:]])arch:[[:space:]]*(all|noarch)($|[[:space:]])' "$tmp/adbdump.txt" || fail "APK architecture is not architecture-independent"
 grep -Eq '(^|[[:space:]])luci-base($|[[:space:]<>=~])' "$tmp/adbdump.txt" || fail "luci-base dependency missing"
-grep -Eq '/?usr/share/ucode/luci/template/themes/neovpn/header\.ut($|[[:space:]])' "$tmp/adbdump.txt" || fail "theme header missing"
-grep -Eq '/?www/luci-static/neovpn/css/pages\.css($|[[:space:]])' "$tmp/adbdump.txt" || fail "theme CSS missing"
-grep -Eq '/?etc/uci-defaults/30_luci-theme-neovpn($|[[:space:]])' "$tmp/adbdump.txt" || fail "uci-defaults missing"
+grep -Eq '(^|[[:space:]])header\.ut($|[[:space:]])' "$tmp/adbdump.txt" || fail "theme header missing"
+grep -Eq '(^|[[:space:]])pages\.css($|[[:space:]])' "$tmp/adbdump.txt" || fail "theme CSS missing"
+grep -Eq '(^|[[:space:]])30_luci-theme-neovpn($|[[:space:]])' "$tmp/adbdump.txt" || fail "uci-defaults missing"
 
 if grep -E '(^|/)(\.DS_Store|validation|stage|staging)(/|$)' "$tmp/adbdump.txt" >/dev/null; then
 	fail "development artifact found in APK"

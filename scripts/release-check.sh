@@ -78,32 +78,22 @@ else
 	(cd "$DIST" && shasum -a 256 -c SHA256SUMS)
 fi
 
-"$apk_tool" info --allow-untrusted "$APK" >/dev/null || fail "APK metadata is not readable"
-"$apk_tool" info --allow-untrusted -L "$APK" > "$tmp/files.txt"
-"$apk_tool" info --allow-untrusted -d "$APK" > "$tmp/deps.txt"
-"$apk_tool" info --allow-untrusted -v "$APK" > "$tmp/version.txt"
+"$apk_tool" adbdump "$APK" > "$tmp/adbdump.txt" || fail "APK metadata is not readable"
 
-grep -Eq "^${PKG_NAME}-1\\.0\\.0_rc3-r1$" "$tmp/version.txt" || fail "invalid package version"
-grep -qx 'usr/share/ucode/luci/template/themes/neovpn/header.ut' "$tmp/files.txt" || fail "theme header missing"
-grep -qx 'www/luci-static/neovpn/css/pages.css' "$tmp/files.txt" || fail "theme CSS missing"
-grep -qx 'etc/uci-defaults/30_luci-theme-neovpn' "$tmp/files.txt" || fail "uci-defaults missing"
-grep -Eq '^luci-base($|[<>=~])' "$tmp/deps.txt" || fail "luci-base dependency missing"
+grep -Eq "(^|[[:space:]])name:[[:space:]]*${PKG_NAME}($|[[:space:]])" "$tmp/adbdump.txt" || fail "invalid package name"
+grep -Eq '(^|[[:space:]])version:[[:space:]]*1\.0\.0_rc3-r1($|[[:space:]])' "$tmp/adbdump.txt" || fail "invalid package version"
+grep -Eq '(^|[[:space:]])arch:[[:space:]]*(all|noarch)($|[[:space:]])' "$tmp/adbdump.txt" || fail "APK architecture is not architecture-independent"
+grep -Eq '(^|[[:space:]])luci-base($|[[:space:]<>=~])' "$tmp/adbdump.txt" || fail "luci-base dependency missing"
+grep -Eq '/?usr/share/ucode/luci/template/themes/neovpn/header\.ut($|[[:space:]])' "$tmp/adbdump.txt" || fail "theme header missing"
+grep -Eq '/?www/luci-static/neovpn/css/pages\.css($|[[:space:]])' "$tmp/adbdump.txt" || fail "theme CSS missing"
+grep -Eq '/?etc/uci-defaults/30_luci-theme-neovpn($|[[:space:]])' "$tmp/adbdump.txt" || fail "uci-defaults missing"
 
-if grep -E '(^|/)(\.DS_Store|validation|stage|staging)(/|$)' "$tmp/files.txt" >/dev/null; then
+if grep -E '(^|/)(\.DS_Store|validation|stage|staging)(/|$)' "$tmp/adbdump.txt" >/dev/null; then
 	fail "development artifact found in APK"
 fi
 
-if grep -E '/(Users|home|private/var)/' "$tmp/files.txt" >/dev/null; then
+if grep -E '/(Users|home|private/var)/' "$tmp/adbdump.txt" >/dev/null; then
 	fail "absolute local workstation path found in APK"
-fi
-
-if ! "$apk_tool" manifest "$APK" > "$tmp/manifest.txt" 2>/dev/null; then
-	"$apk_tool" info --contents --allow-untrusted "$APK" > "$tmp/manifest.txt" 2>/dev/null || true
-fi
-if grep -E 'arch[=: ][[:space:]]*[^[:space:]]+' "$tmp/manifest.txt" > "$tmp/manifest-arch.txt"; then
-	if grep -Ev '(all|noarch)' "$tmp/manifest-arch.txt" >/dev/null; then
-		fail "APK architecture is not architecture-independent"
-	fi
 fi
 
 printf '%s\n' "release-check: OK"

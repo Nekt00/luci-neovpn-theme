@@ -81,7 +81,7 @@ fi
 rootfs="$tmp/root"
 mkdir -p "$rootfs"
 
-"$apk_tool" add --root "$rootfs" --initdb --allow-untrusted --no-scripts --force-broken-world "$APK" >/dev/null
+"$apk_tool" add --root "$rootfs" --initdb --usermode --allow-untrusted --no-scripts --force-broken-world "$APK" >/dev/null
 "$apk_tool" info --root "$rootfs" "$PKG_NAME" >/dev/null || fail "package is not registered in apk database"
 
 "$apk_tool" info --root "$rootfs" -e "$PKG_NAME" >/dev/null || fail "package existence check failed"

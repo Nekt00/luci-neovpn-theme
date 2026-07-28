@@ -176,6 +176,11 @@ traffic_mechanism_active() {
   return 1
 }
 
+podkop_routing_active() {
+  command -v nft >/dev/null 2>&1 || return 1
+  nft list table inet PodkopTable >/dev/null 2>&1
+}
+
 menu_url() {
   local token="$1"
   local file=""
@@ -201,6 +206,11 @@ provider_json() {
   local configured="${13}" mode="${14}" active_items="${15}" health="${16}" reason="${17}" manage_url="${18}"
   local service_state="${19}" traffic_state="${20}" traffic_reason="${21}"
   local routing_mode="${22}" configuration_state="${23}"
+  shift 23
+  local controller_running="${1:-$service_is_running}"
+  local routing_active="${2:-0}"
+  local routing_mechanism="${3:-}"
+  local routing_table="${4:-}"
 
   printf '{'
   printf '"id":'; json_string "$id"; printf ','
@@ -212,8 +222,9 @@ provider_json() {
   printf '"service_state":'; json_string "$service_state"; printf ','
   printf '"traffic_state":'; json_string "$traffic_state"; printf ','
   printf '"traffic_reason":'; json_null_or_string "$traffic_reason"; printf ','
-  printf '"service":{"name":'; json_string "$service_name"; printf ',"running":'; json_bool "$service_is_running"; printf ',"enabled":'; json_bool "$service_is_enabled"; printf '},'
+  printf '"service":{"name":'; json_string "$service_name"; printf ',"running":'; json_bool "$service_is_running"; printf ',"enabled":'; json_bool "$service_is_enabled"; printf ',"controller_running":'; json_bool "$controller_running"; printf '},'
   printf '"backend":{"name":'; json_string "$backend_name"; printf ',"running":'; json_bool "$backend_is_running"; printf ',"version":'; json_null_or_string "$backend_version"; printf '},'
+  printf '"routing":{"active":'; json_bool "$routing_active"; printf ',"mechanism":'; json_null_or_string "$routing_mechanism"; printf ',"table":'; json_null_or_string "$routing_table"; printf '},'
   printf '"configured":'; json_bool "$configured"; printf ','
   printf '"mode":'; json_null_or_string "$mode"; printf ','
   printf '"routing_mode":'; json_string "$routing_mode"; printf ','
@@ -226,7 +237,7 @@ provider_json() {
 }
 
 podkop_status() {
-  local pkg=0 ui=0 init=0 config=0 installed=0 running=0 enabled=0 backend=0 configured=0
+  local pkg=0 ui=0 init=0 config=0 installed=0 controller=0 effective_running=0 enabled=0 backend=0 configured=0
   local route=0 version="" count=0 mode="" routing_mode="unknown" configuration_state="unknown" health="unknown" reason="" url="" service_state="unknown" traffic_state="unknown" traffic_reason=""
 
   package_installed podkop && pkg=1
@@ -236,11 +247,13 @@ podkop_status() {
   [ "$pkg$ui$init$config" != "0000" ] && installed=1
   [ "$installed" = "1" ] || return 1
 
-  service_running podkop && running=1
+  service_running podkop && controller=1
   service_enabled podkop && enabled=1
-  service_running sing-box || pidof sing-box >/dev/null 2>&1 && backend=1
+  if service_running sing-box || pidof sing-box >/dev/null 2>&1; then
+    backend=1
+  fi
   uci_configured podkop && configured=1
-  traffic_mechanism_active podkop && route=1
+  podkop_routing_active && route=1
   version="$(package_version podkop)"
   count="$(uci_section_count podkop)"
   mode="$(uci_mode podkop)"
@@ -248,19 +261,31 @@ podkop_status() {
   configuration_state="$(provider_configuration_state podkop "$configured")"
   [ "$ui" = "1" ] && url="$(menu_url podkop)"
 
-  if [ "$running" = "0" ]; then
-    service_state="stopped"; traffic_state="inactive"; traffic_reason="service_stopped"; health="stopped"
-  elif [ "$backend" = "0" ]; then
-    service_state="running"; traffic_state="inactive"; traffic_reason="backend_stopped"; health="degraded"; reason="Backend is not running"
-  elif [ "$configured" = "0" ]; then
-    service_state="running"; traffic_state="inactive"; traffic_reason="config_missing"; health="degraded"; reason="Configuration is missing"
-  elif [ "$route" = "1" ]; then
-    service_state="running"; traffic_state="active"; health="ok"
-  else
-    service_state="running"; traffic_state="unknown"; traffic_reason="routing_unverified"; health="degraded"; reason="Traffic routing could not be verified"
+  if [ "$backend" = "1" ] || [ "$controller" = "1" ]; then
+    effective_running=1
   fi
 
-  provider_json podkop Podkop sing-box "$installed" "$ui" "$version" podkop "$running" "$enabled" sing-box "$backend" "" "$configured" "$mode" "$count" "$health" "$reason" "$url" "$service_state" "$traffic_state" "$traffic_reason" "$routing_mode" "$configuration_state"
+  if [ "$backend" = "1" ] && [ "$route" = "1" ]; then
+    service_state="running"; traffic_state="active"; health="ok"
+  elif [ "$backend" = "1" ]; then
+    service_state="running"; traffic_state="unknown"; traffic_reason="routing_unverified"; health="degraded"; reason="Traffic routing could not be verified"
+  elif [ "$controller" = "1" ]; then
+    service_state="running"; traffic_state="inactive"; traffic_reason="backend_stopped"; health="degraded"; reason="Backend is not running"
+  else
+    service_state="stopped"; traffic_state="inactive"; traffic_reason="service_stopped"; health="stopped"
+  fi
+
+  if [ "$configured" = "0" ]; then
+    configuration_state="missing"
+    if [ "$service_state" = "stopped" ]; then
+      health="stopped"
+    else
+      health="degraded"
+      reason="Configuration is missing"
+    fi
+  fi
+
+  provider_json podkop Podkop sing-box "$installed" "$ui" "$version" podkop "$effective_running" "$enabled" sing-box "$backend" "" "$configured" "$mode" "$count" "$health" "$reason" "$url" "$service_state" "$traffic_state" "$traffic_reason" "$routing_mode" "$configuration_state" "$controller" "$route" nftables PodkopTable
 }
 
 netshift_status() {
@@ -351,7 +376,7 @@ status() {
     [ -n "$item" ] || continue
     providers="${providers:+$providers,}$item"
     installed_count=$((installed_count + 1))
-    printf '%s' "$item" | grep -q '"running":true' && running_count=$((running_count + 1))
+    printf '%s' "$item" | grep -q '"service_state":"running"' && running_count=$((running_count + 1))
     printf '%s' "$item" | grep -q '"traffic_state":"active"' && active_count=$((active_count + 1))
   done
 

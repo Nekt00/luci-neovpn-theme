@@ -16,7 +16,9 @@ fail() {
 
 apk_tool="${OPENWRT_APK:-}"
 if [ -z "$apk_tool" ]; then
-	if [ -x "$DIST/openwrt-apk" ]; then
+	if [ -x "$DIST/openwrt-sdk-host/bin/apk" ]; then
+		apk_tool="$DIST/openwrt-sdk-host/bin/apk"
+	elif [ -x "$DIST/openwrt-apk" ]; then
 		apk_tool="$DIST/openwrt-apk"
 	elif command -v apk >/dev/null 2>&1; then
 		apk_tool="$(command -v apk)"

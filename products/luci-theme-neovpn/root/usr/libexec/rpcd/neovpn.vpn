@@ -5,16 +5,15 @@ SNAPSHOT_APK=""
 SNAPSHOT_APK_VERSIONS=""
 SNAPSHOT_SERVICES=""
 SNAPSHOT_PS=""
-SNAPSHOT_IP_LINKS=""
 SNAPSHOT_IP_RULES=""
 SNAPSHOT_IP_ROUTES=""
 SNAPSHOT_UCI_PODKOP=""
 SNAPSHOT_UCI_NETSHIFT=""
-SNAPSHOT_UCI_SSCLASH=""
-SNAPSHOT_UCI_CLASH=""
 SNAPSHOT_PODKOP_ROUTING=0
 SNAPSHOT_NETSHIFT_ROUTING=0
 SNAPSHOT_NOW=0
+SNAPSHOT_SSCLASH_SETTINGS=""
+SNAPSHOT_SSCLASH_NFT=0
 
 json_escape() {
   printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g'
@@ -47,18 +46,17 @@ collect_snapshot() {
   SNAPSHOT_APK_VERSIONS="$(apk info -v 2>/dev/null || true)"
   SNAPSHOT_SERVICES="$(ubus call service list 2>/dev/null || true)"
   SNAPSHOT_PS="$(ps w 2>/dev/null || ps 2>/dev/null || true)"
-  SNAPSHOT_IP_LINKS="$(ip -o link show 2>/dev/null || true)"
   SNAPSHOT_IP_RULES="$(ip rule show 2>/dev/null || true)"
   SNAPSHOT_IP_ROUTES="$(ip route show table all 2>/dev/null || true)"
   SNAPSHOT_UCI_PODKOP="$(uci -q show podkop 2>/dev/null || true)"
   SNAPSHOT_UCI_NETSHIFT="$(uci -q show netshift 2>/dev/null || true)"
-  SNAPSHOT_UCI_SSCLASH="$(uci -q show ssclash 2>/dev/null || true)"
-  SNAPSHOT_UCI_CLASH="$(uci -q show clash 2>/dev/null || true)"
+  SNAPSHOT_SSCLASH_SETTINGS="$(read_limited_file /opt/clash/settings)"
 
   if command -v nft >/dev/null 2>&1; then
     nft list table inet PodkopTable >/dev/null 2>&1 && SNAPSHOT_PODKOP_ROUTING=1
     nft list table inet NetShiftTable >/dev/null 2>&1 && SNAPSHOT_NETSHIFT_ROUTING=1
     nft list table inet netshift >/dev/null 2>&1 && SNAPSHOT_NETSHIFT_ROUTING=1
+    nft list table inet clash >/dev/null 2>&1 && SNAPSHOT_SSCLASH_NFT=1
   fi
 
   printf '%s\n%s\n' "$SNAPSHOT_IP_RULES" "$SNAPSHOT_IP_ROUTES" | grep -Eiq 'netshift' && SNAPSHOT_NETSHIFT_ROUTING=1
@@ -228,7 +226,7 @@ provider_configuration_state() {
       uci_has_any_option_from "$SNAPSHOT_UCI_NETSHIFT" netshift proxy_string outbound_json server subscription url routes rules include_domains include_subnets && printf 'ready' || printf 'unknown'
       ;;
     ssclash)
-      if [ -n "$SNAPSHOT_UCI_SSCLASH" ] || [ -n "$SNAPSHOT_UCI_CLASH" ] || [ -s /opt/clash/config.yaml ] || [ -s /opt/clash/config.yml ]; then
+      if [ -n "$SNAPSHOT_SSCLASH_SETTINGS" ] || [ -s /opt/clash/config.yaml ]; then
         printf 'ready'
       else
         printf 'missing'
@@ -342,6 +340,12 @@ error_message() {
   case "$1" in
     routing_not_active) printf 'VPN routing is not active' ;;
     traffic_unverified) printf 'VPN traffic could not be verified' ;;
+    core_not_running) printf 'SSClash core is not running' ;;
+    nft_table_missing) printf 'SSClash nft table is missing' ;;
+    policy_routing_invalid) printf 'SSClash policy routing validation failed' ;;
+    forwarding_invalid) printf 'SSClash forwarding validation failed' ;;
+    settings_missing) printf 'SSClash settings are missing' ;;
+    mode_invalid) printf 'SSClash mode settings are invalid' ;;
     backend_stopped) printf 'Backend is not running' ;;
     service_stopped) printf 'Application is not active' ;;
     config_missing) printf 'Configuration is missing' ;;
@@ -381,7 +385,7 @@ provider_json() {
   local configuration_state="${13}" backend="${14}" manage_url="${15}" ui_installed="${16}" active_items="${17}"
   local service_name="${18}" effective_running="${19}" controller_running="${20}" backend_running="${21}"
   local routing_active="${22}" routing_mechanism="${23}" routing_table="${24}" runtime_owner="${25}"
-  local protocol="${26}" application_state="" application_reason="" error_severity="warning" check_result=""
+  local protocol="${26}" check_source="${27:-runtime_snapshot}" application_state="" application_reason="" error_severity="warning" check_result=""
 
   application_state="$(application_state_from_service "$service_state")"
   application_reason="$reason"
@@ -401,7 +405,7 @@ provider_json() {
   printf '"service_state":'; json_string "$service_state"; printf ','
   printf '"traffic_state":'; json_string "$traffic_state"; printf ','
   printf '"traffic_reason":'; json_null_or_string "$reason"; printf ','
-  printf '"last_check":'; emit_last_check "$check_result" runtime_snapshot; printf ','
+  printf '"last_check":'; emit_last_check "$check_result" "$check_source"; printf ','
   printf '"errors":'; emit_errors "$reason" "$error_severity"; printf ','
   printf '"health":'; json_string "$health"; printf ','
   printf '"reason":'; json_null_or_string "$reason"; printf ','
@@ -516,51 +520,93 @@ netshift_provider() {
 }
 
 ssclash_owner_evidence() {
-  package_installed luci-app-ssclash || [ -n "$SNAPSHOT_UCI_SSCLASH" ] || exists_path /etc/init.d/ssclash
+  package_installed luci-app-ssclash || exists_path /etc/init.d/clash || [ -n "$SNAPSHOT_SSCLASH_SETTINGS" ] || [ -s /opt/clash/config.yaml ]
 }
 
-ssclash_mihomo_running() {
-  process_running '(^|[ /])(/opt/clash/[^ ]*/)?(mihomo|clash)([ ]|$)' || service_running clash || service_running ssclash
+ssclash_core_running() {
+  service_running clash || process_running '(^|[[:space:]])/opt/clash/bin/clash([[:space:]]|$)'
 }
 
-ssclash_routing_active() {
-  collect_snapshot
-  printf '%s\n%s\n%s\n' "$SNAPSHOT_IP_LINKS" "$SNAPSHOT_IP_RULES" "$SNAPSHOT_IP_ROUTES" | grep -Eiq '(mihomo|clash|utun|meta)'
+ssclash_setting() {
+  local key="$1"
+
+  printf '%s\n' "$SNAPSHOT_SSCLASH_SETTINGS" | sed -n "s/^${key}=//p" | tail -n 1 | tr -d '"'"'"
+}
+
+ssclash_mode_display() {
+  local proxy="$1" iface="$2" proxy_label="" iface_label=""
+
+  case "$proxy" in
+    tproxy) proxy_label="TProxy" ;;
+    tun) proxy_label="TUN" ;;
+    mixed) proxy_label="Mixed" ;;
+    *) proxy_label="" ;;
+  esac
+
+  case "$iface" in
+    exclude) iface_label="Исключения" ;;
+    explicit) iface_label="Выбранные интерфейсы" ;;
+    *) iface_label="" ;;
+  esac
+
+  [ -n "$proxy_label" ] && [ -n "$iface_label" ] && {
+    printf '%s · %s' "$proxy_label" "$iface_label"
+    return
+  }
+
+  printf 'Не определён'
+}
+
+ssclash_rules_check() {
+  local check="$1"
+
+  [ -x /opt/clash/bin/clash-rules ] || return 1
+  /opt/clash/bin/clash-rules "$check" >/dev/null 2>&1
 }
 
 ssclash_provider() {
   local installed=0 ui=0 controller=0 enabled=0 core=0 backend=0 configured=0 route=0 effective=0
-  local version="" count=0 mode="" routing_mode="unknown" configuration_state="unknown"
-  local service_name="ssclash" service_state="unknown" traffic_state="unknown" health="unknown" reason="" url="" protocol=""
+  local nft_table=0 policy_valid=0 forward_valid=1 forward_required=0 mode_valid=0
+  local version="" count=0 proxy_mode="" interface_mode="" mode_display="" mode="" routing_mode="unknown" configuration_state="unknown"
+  local service_name="clash" service_state="unknown" traffic_state="unknown" health="unknown" reason="" url="" protocol=""
 
   ssclash_owner_evidence || return 1
   installed=1
   package_installed luci-app-ssclash && ui=1
-  service_running ssclash && controller=1
-  if service_running clash; then
-    controller=1
-    service_name="clash"
-  fi
-  service_enabled ssclash && enabled=1
-  if [ "$enabled" != "1" ] && service_enabled clash; then
-    enabled=1
-  fi
-  binary_exists mihomo clash /opt/clash/mihomo /opt/clash/clash /opt/clash/bin/mihomo /opt/clash/bin/clash && core=1
-  ssclash_mihomo_running && backend=1
-  if [ -n "$SNAPSHOT_UCI_SSCLASH" ] || [ -n "$SNAPSHOT_UCI_CLASH" ] || [ -s /opt/clash/config.yaml ] || [ -s /opt/clash/config.yml ]; then
+  service_running clash && controller=1
+  service_enabled clash && enabled=1
+  binary_exists /opt/clash/bin/clash && core=1
+  ssclash_core_running && backend=1
+  if [ -n "$SNAPSHOT_SSCLASH_SETTINGS" ] || [ -s /opt/clash/config.yaml ]; then
     configured=1
   fi
-  ssclash_routing_active && route=1
+  [ "$SNAPSHOT_SSCLASH_NFT" = "1" ] && nft_table=1
+  ssclash_rules_check validate_policy && policy_valid=1
+  proxy_mode="$(ssclash_setting PROXY_MODE)"
+  interface_mode="$(ssclash_setting INTERFACE_MODE)"
+  case "$proxy_mode" in
+    tproxy) forward_required=0 ;;
+    tun|mixed) forward_required=1 ;;
+    *) forward_required=0 ;;
+  esac
+  case "$proxy_mode:$interface_mode" in
+    tproxy:exclude|tproxy:explicit|tun:exclude|tun:explicit|mixed:exclude|mixed:explicit) mode_valid=1 ;;
+  esac
+  if [ "$forward_required" = "1" ]; then
+    forward_valid=0
+    ssclash_rules_check validate_forward && forward_valid=1
+  fi
+  [ "$backend" = "1" ] && [ "$nft_table" = "1" ] && [ "$policy_valid" = "1" ] && [ "$forward_valid" = "1" ] && route=1
   if [ "$backend" = "1" ] || [ "$controller" = "1" ]; then
     effective=1
   fi
-  version="$(first_package_version luci-app-ssclash mihomo clash)"
-  count="$(uci_section_count_from "$SNAPSHOT_UCI_SSCLASH" ssclash)"
-  [ "$count" -gt 0 ] || count="$(uci_section_count_from "$SNAPSHOT_UCI_CLASH" clash)"
-  mode="$(printf '%s\n%s\n' "$SNAPSHOT_UCI_SSCLASH" "$SNAPSHOT_UCI_CLASH" | sed -n "s/^[^.]*\\.[^.]*\\.\\(mode\\|proxy_mode\\|operation_mode\\)=['\"]*\\([^'\"]*\\)['\"]*$/\\2/p" | head -n 1)"
-  routing_mode="$(provider_routing_mode ssclash "$mode")"
+  version="$(first_package_version luci-app-ssclash clash)"
+  count=1
+  mode_display="$(ssclash_mode_display "$proxy_mode" "$interface_mode")"
+  mode="$mode_display"
+  [ "$mode_valid" = "1" ] && routing_mode="$proxy_mode"
   configuration_state="$(provider_configuration_state ssclash "$configured")"
-  protocol="$(protocol_from_text "$(printf '%s\n%s\n' "$SNAPSHOT_UCI_SSCLASH" "$SNAPSHOT_UCI_CLASH"; read_limited_file /opt/clash/config.yaml; read_limited_file /opt/clash/config.yml)")"
+  protocol="|||Not determined|1"
   [ "$ui" = "1" ] && url="$(menu_url ssclash)"
 
   if [ "$configured" = "0" ]; then
@@ -568,14 +614,24 @@ ssclash_provider() {
   elif [ "$core" = "0" ]; then
     service_state="stopped"; traffic_state="inactive"; health="error"; reason="core_missing"
   elif [ "$backend" = "0" ]; then
-    service_state="stopped"; traffic_state="inactive"; health="degraded"; reason="service_stopped"
+    service_state="stopped"; traffic_state="inactive"; health="degraded"; reason="core_not_running"
+  elif [ -n "$SNAPSHOT_SSCLASH_SETTINGS" ] && [ "$mode_valid" = "0" ]; then
+    service_state="running"; traffic_state="unknown"; health="degraded"; reason="mode_invalid"
+  elif [ -z "$SNAPSHOT_SSCLASH_SETTINGS" ]; then
+    service_state="running"; traffic_state="unknown"; health="degraded"; reason="settings_missing"
+  elif [ "$nft_table" = "0" ]; then
+    service_state="running"; traffic_state="inactive"; health="degraded"; reason="nft_table_missing"
+  elif [ "$policy_valid" = "0" ]; then
+    service_state="running"; traffic_state="inactive"; health="degraded"; reason="policy_routing_invalid"
+  elif [ "$forward_valid" = "0" ]; then
+    service_state="running"; traffic_state="degraded"; health="degraded"; reason="forwarding_invalid"
   elif [ "$route" = "1" ]; then
     service_state="running"; traffic_state="active"; health="ok"
   else
     service_state="running"; traffic_state="unknown"; health="degraded"; reason="traffic_unverified"
   fi
 
-  provider_json ssclash SSClash "$installed" "$version" "$configured" "$enabled" "$service_state" "$traffic_state" "$health" "$reason" "$mode" "$routing_mode" "$configuration_state" Mihomo "$url" "$ui" "$count" "$service_name" "$effective" "$controller" "$backend" "$route" routing null ssclash "$protocol"
+  provider_json ssclash SSClash "$installed" "$version" "$configured" "$enabled" "$service_state" "$traffic_state" "$health" "$reason" "$mode" "$routing_mode" "$configuration_state" Mihomo "$url" "$ui" "$count" "$service_name" "$effective" "$controller" "$backend" "$route" ssclash_runtime_validation clash ssclash "$protocol" ssclash_runtime_validation
 }
 
 status() {

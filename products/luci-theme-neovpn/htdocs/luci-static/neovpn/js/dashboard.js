@@ -177,6 +177,12 @@
     errorServiceStopped: "Application is not active",
     errorConfigMissing: "Configuration is missing",
     errorCoreMissing: "Mihomo core is missing",
+    errorCoreNotRunning: "SSClash core is not running",
+    errorNftTableMissing: "SSClash nft table is missing",
+    errorPolicyRoutingInvalid: "SSClash policy routing validation failed",
+    errorForwardingInvalid: "SSClash forwarding validation failed",
+    errorSettingsMissing: "SSClash settings are missing",
+    errorModeInvalid: "SSClash mode settings are invalid",
     degraded: "Degraded",
     conflict: "Conflict",
     configurationRequired: "Configuration required",
@@ -256,6 +262,12 @@
     "Application is not active": "Приложение не активно",
     "Configuration is missing": "Конфигурация отсутствует",
     "Mihomo core is missing": "Ядро Mihomo отсутствует",
+    "SSClash core is not running": "Ядро SSClash не запущено",
+    "SSClash nft table is missing": "Таблица nft SSClash отсутствует",
+    "SSClash policy routing validation failed": "Policy routing SSClash не прошёл проверку",
+    "SSClash forwarding validation failed": "Forwarding SSClash не прошёл проверку",
+    "SSClash settings are missing": "Настройки SSClash отсутствуют",
+    "SSClash mode settings are invalid": "Режим SSClash задан некорректно",
     "Selective": "Выборочный",
     "All traffic": "Весь трафик",
     "Rules": "По правилам",
@@ -2057,6 +2069,8 @@
       return translate(STRINGS.active);
     case "inactive":
       return translate(STRINGS.inactive);
+    case "degraded":
+      return translate(STRINGS.degraded);
     case "error":
       return translate(STRINGS.connectionError);
     default:
@@ -2090,6 +2104,7 @@
       return "positive";
     case "stopped":
     case "inactive":
+    case "degraded":
       return "warning";
     case "error":
       return "critical";
@@ -2137,6 +2152,24 @@
       break;
     case "core_missing":
       message = translate(STRINGS.errorCoreMissing);
+      break;
+    case "core_not_running":
+      message = translate(STRINGS.errorCoreNotRunning);
+      break;
+    case "nft_table_missing":
+      message = translate(STRINGS.errorNftTableMissing);
+      break;
+    case "policy_routing_invalid":
+      message = translate(STRINGS.errorPolicyRoutingInvalid);
+      break;
+    case "forwarding_invalid":
+      message = translate(STRINGS.errorForwardingInvalid);
+      break;
+    case "settings_missing":
+      message = translate(STRINGS.errorSettingsMissing);
+      break;
+    case "mode_invalid":
+      message = translate(STRINGS.errorModeInvalid);
       break;
     }
 

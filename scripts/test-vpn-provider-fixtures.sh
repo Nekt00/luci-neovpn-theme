@@ -28,9 +28,13 @@ mkdir -p "$mockbin" "$rootfs/etc/init.d" "$rootfs/etc/config" "$rootfs/usr/bin" 
 sed \
 	-e 's#\[ -e "$1" \]#[ -e "$NEOVPN_FIXTURE_ROOT$1" ]#' \
 	-e 's#\[ -x "$item" \]#[ -x "$NEOVPN_FIXTURE_ROOT$item" ]#' \
+	-e 's#\[ -x /opt/clash/bin/clash-rules \]#[ -x "$NEOVPN_FIXTURE_ROOT/opt/clash/bin/clash-rules" ]#' \
 	-e 's#\[ -x "/etc/init.d/$name" \]#[ -x "$NEOVPN_FIXTURE_ROOT/etc/init.d/$name" ]#' \
+	-e 's#\[ -r "$file" \]#[ -r "$NEOVPN_FIXTURE_ROOT$file" ]#' \
+	-e 's#dd if="$file"#dd if="$NEOVPN_FIXTURE_ROOT$file"#' \
 	-e 's#\[ -s /opt/clash/config.yaml \]#[ -s "$NEOVPN_FIXTURE_ROOT/opt/clash/config.yaml" ]#' \
 	-e 's#\[ -s /opt/clash/config.yml \]#[ -s "$NEOVPN_FIXTURE_ROOT/opt/clash/config.yml" ]#' \
+	-e 's#/opt/clash/bin/clash-rules #"$NEOVPN_FIXTURE_ROOT/opt/clash/bin/clash-rules" #' \
 	"$SOURCE" > "$tmp/neovpn.vpn"
 chmod 0755 "$tmp/neovpn.vpn"
 
@@ -65,13 +69,15 @@ write_mock "$mockbin/ps" '#!/usr/bin/env sh
 printf "PID USER COMMAND\n"
 [ "${SINGBOX_RUNNING:-0}" = "1" ] && printf "101 root /usr/bin/sing-box run -c /etc/sing-box/config.json\n"
 [ "${NETSHIFT_PROCESS:-0}" = "1" ] && printf "102 root /usr/bin/netshift watch\n"
-[ "${MIHOMO_RUNNING:-0}" = "1" ] && printf "103 root /opt/clash/bin/mihomo -d /opt/clash\n"'
+[ "${CLASH_RUNNING:-0}" = "1" ] && printf "103 root /opt/clash/bin/clash -d /opt/clash\n"
+[ "${MIHOMO_RUNNING:-0}" = "1" ] && printf "104 root /usr/bin/mihomo -d /tmp/generic\n"'
 
 # shellcheck disable=SC2016
 write_mock "$mockbin/nft" '#!/usr/bin/env sh
 [ "$*" = "list table inet PodkopTable" ] && [ "${PODKOP_ROUTE:-0}" = "1" ] && exit 0
 [ "$*" = "list table inet NetShiftTable" ] && [ "${NETSHIFT_ROUTE:-0}" = "1" ] && exit 0
 [ "$*" = "list table inet netshift" ] && [ "${NETSHIFT_ROUTE:-0}" = "1" ] && exit 0
+[ "$*" = "list table inet clash" ] && [ "${SSCLASH_NFT:-0}" = "1" ] && exit 0
 exit 1'
 
 # shellcheck disable=SC2016
@@ -132,8 +138,29 @@ run_case() {
 	NEOVPN_FIXTURE_ROOT="$rootfs" env "$@" bash -c '
 		[ "${PODKOP_PRESENT:-0}" = "1" ] && touch "$NEOVPN_FIXTURE_ROOT/etc/config/podkop" && printf "#!/bin/sh\nexit 0\n" > "$NEOVPN_FIXTURE_ROOT/etc/init.d/podkop" && chmod 755 "$NEOVPN_FIXTURE_ROOT/etc/init.d/podkop"
 		[ "${NETSHIFT_PRESENT:-0}" = "1" ] && touch "$NEOVPN_FIXTURE_ROOT/etc/config/netshift" && printf "#!/bin/sh\nexit 0\n" > "$NEOVPN_FIXTURE_ROOT/etc/init.d/netshift" && chmod 755 "$NEOVPN_FIXTURE_ROOT/etc/init.d/netshift" && printf "#!/bin/sh\nexit 0\n" > "$NEOVPN_FIXTURE_ROOT/usr/bin/netshift" && chmod 755 "$NEOVPN_FIXTURE_ROOT/usr/bin/netshift"
-		[ "${SSCLASH_PRESENT:-0}" = "1" ] && mkdir -p "$NEOVPN_FIXTURE_ROOT/opt/clash/bin" && touch "$NEOVPN_FIXTURE_ROOT/etc/config/ssclash" && printf "#!/bin/sh\nexit 0\n" > "$NEOVPN_FIXTURE_ROOT/etc/init.d/ssclash" && chmod 755 "$NEOVPN_FIXTURE_ROOT/etc/init.d/ssclash"
-		[ "${MIHOMO_PRESENT:-0}" = "1" ] && mkdir -p "$NEOVPN_FIXTURE_ROOT/opt/clash/bin" && printf "#!/bin/sh\nexit 0\n" > "$NEOVPN_FIXTURE_ROOT/opt/clash/bin/mihomo" && chmod 755 "$NEOVPN_FIXTURE_ROOT/opt/clash/bin/mihomo"
+		[ "${SSCLASH_PRESENT:-0}" = "1" ] && mkdir -p "$NEOVPN_FIXTURE_ROOT/opt/clash/bin" && touch "$NEOVPN_FIXTURE_ROOT/opt/clash/config.yaml" && printf "#!/bin/sh\nexit 0\n" > "$NEOVPN_FIXTURE_ROOT/etc/init.d/clash" && chmod 755 "$NEOVPN_FIXTURE_ROOT/etc/init.d/clash"
+		if [ "${SSCLASH_SETTINGS:-0}" = "1" ]; then
+			mkdir -p "$NEOVPN_FIXTURE_ROOT/opt/clash"
+			printf "PROXY_MODE=%s\nINTERFACE_MODE=%s\n" "${SSCLASH_PROXY_MODE:-tproxy}" "${SSCLASH_INTERFACE_MODE:-exclude}" > "$NEOVPN_FIXTURE_ROOT/opt/clash/settings"
+		fi
+		if [ "${CLASH_CORE_PRESENT:-0}" = "1" ]; then
+			mkdir -p "$NEOVPN_FIXTURE_ROOT/opt/clash/bin"
+			printf "#!/bin/sh\nexit 0\n" > "$NEOVPN_FIXTURE_ROOT/opt/clash/bin/clash"
+			chmod 755 "$NEOVPN_FIXTURE_ROOT/opt/clash/bin/clash"
+		fi
+		if [ "${CLASH_RULES_PRESENT:-0}" = "1" ]; then
+			mkdir -p "$NEOVPN_FIXTURE_ROOT/opt/clash/bin"
+			cat > "$NEOVPN_FIXTURE_ROOT/opt/clash/bin/clash-rules" <<'"'"'RULES'"'"'
+#!/bin/sh
+case "$1" in
+	validate_policy) [ "${SSCLASH_POLICY_OK:-0}" = "1" ] && exit 0 ;;
+	validate_forward) [ "${SSCLASH_FORWARD_OK:-0}" = "1" ] && exit 0 ;;
+esac
+exit 1
+RULES
+			chmod 755 "$NEOVPN_FIXTURE_ROOT/opt/clash/bin/clash-rules"
+		fi
+		[ "${MIHOMO_PRESENT:-0}" = "1" ] && mkdir -p "$NEOVPN_FIXTURE_ROOT/usr/bin" && printf "#!/bin/sh\nexit 0\n" > "$NEOVPN_FIXTURE_ROOT/usr/bin/mihomo" && chmod 755 "$NEOVPN_FIXTURE_ROOT/usr/bin/mihomo"
 		[ "${SSCLASH_CONFIG_FILE:-0}" = "1" ] && touch "$NEOVPN_FIXTURE_ROOT/opt/clash/config.yaml"
 		true
 	'
@@ -169,20 +196,30 @@ run_case "netshift-migrated-podkop-remnants" '"id":"podkop".*"service_state":"no
 run_case "netshift-stopped" '"id":"netshift".*"service_state":"stopped".*"traffic_state":"inactive"' \
 	NEOVPN_PACKAGES="netshift luci-app-netshift" NETSHIFT_PRESENT=1 NETSHIFT_CONFIGURED=1
 
-run_case "ssclash-mihomo-missing" '"id":"ssclash".*"service_state":"stopped".*"health":"error".*"reason":"core_missing"' \
-	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 SSCLASH_CONFIGURED=1
-run_case "ssclash-mihomo-present-stopped" '"id":"ssclash".*"service_state":"stopped".*"traffic_state":"inactive"' \
-	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 SSCLASH_CONFIGURED=1 MIHOMO_PRESENT=1
-run_case "ssclash-mihomo-unverified" '"id":"ssclash".*"application_state":"active".*"traffic_state":"unknown".*"reason":"traffic_unverified"' \
-	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 SSCLASH_CONFIGURED=1 MIHOMO_PRESENT=1 MIHOMO_RUNNING=1
-run_case "ssclash-active" '"id":"ssclash".*"service_state":"running".*"traffic_state":"active".*"health":"ok"' \
-	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 SSCLASH_CONFIGURED=1 MIHOMO_PRESENT=1 MIHOMO_RUNNING=1 SSCLASH_ROUTE=1
+run_case "ssclash-core-missing" '"id":"ssclash".*"service_state":"stopped".*"health":"error".*"reason":"core_missing"' \
+	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 SSCLASH_SETTINGS=1
+run_case "ssclash-core-present-stopped" '"id":"ssclash".*"service_state":"stopped".*"traffic_state":"inactive".*"reason":"core_not_running"' \
+	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 SSCLASH_SETTINGS=1 CLASH_CORE_PRESENT=1
+run_case "ssclash-tproxy-active-no-tun" '"id":"ssclash".*"application_state":"active".*"traffic_state":"active".*"last_check":\{"timestamp":[0-9]+,"result":"success","source":"ssclash_runtime_validation"\}.*"errors":\[\].*"mode":"TProxy · Исключения"' \
+	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 SSCLASH_SETTINGS=1 SSCLASH_PROXY_MODE=tproxy SSCLASH_INTERFACE_MODE=exclude CLASH_CORE_PRESENT=1 CLASH_RUNNING=1 SSCLASH_NFT=1 CLASH_RULES_PRESENT=1 SSCLASH_POLICY_OK=1
+run_case "ssclash-tun-active" '"id":"ssclash".*"traffic_state":"active".*"health":"ok".*"mode":"TUN · Исключения"' \
+	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 SSCLASH_SETTINGS=1 SSCLASH_PROXY_MODE=tun SSCLASH_INTERFACE_MODE=exclude CLASH_CORE_PRESENT=1 CLASH_RUNNING=1 SSCLASH_NFT=1 CLASH_RULES_PRESENT=1 SSCLASH_POLICY_OK=1 SSCLASH_FORWARD_OK=1
+run_case "ssclash-mixed-active" '"id":"ssclash".*"traffic_state":"active".*"health":"ok".*"mode":"Mixed · Исключения"' \
+	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 SSCLASH_SETTINGS=1 SSCLASH_PROXY_MODE=mixed SSCLASH_INTERFACE_MODE=exclude CLASH_CORE_PRESENT=1 CLASH_RUNNING=1 SSCLASH_NFT=1 CLASH_RULES_PRESENT=1 SSCLASH_POLICY_OK=1 SSCLASH_FORWARD_OK=1
+run_case "ssclash-core-active-nft-missing" '"id":"ssclash".*"traffic_state":"inactive".*"reason":"nft_table_missing"' \
+	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 SSCLASH_SETTINGS=1 CLASH_CORE_PRESENT=1 CLASH_RUNNING=1 CLASH_RULES_PRESENT=1 SSCLASH_POLICY_OK=1
+run_case "ssclash-policy-failed" '"id":"ssclash".*"traffic_state":"inactive".*"reason":"policy_routing_invalid"' \
+	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 SSCLASH_SETTINGS=1 CLASH_CORE_PRESENT=1 CLASH_RUNNING=1 SSCLASH_NFT=1 CLASH_RULES_PRESENT=1
+run_case "ssclash-forward-failed" '"id":"ssclash".*"traffic_state":"degraded".*"reason":"forwarding_invalid"' \
+	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 SSCLASH_SETTINGS=1 SSCLASH_PROXY_MODE=tun SSCLASH_INTERFACE_MODE=exclude CLASH_CORE_PRESENT=1 CLASH_RUNNING=1 SSCLASH_NFT=1 CLASH_RULES_PRESENT=1 SSCLASH_POLICY_OK=1
+run_case "ssclash-settings-mode-valid" '"id":"ssclash".*"mode":"TProxy · Выбранные интерфейсы".*"routing_mode":"tproxy"' \
+	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 SSCLASH_SETTINGS=1 SSCLASH_PROXY_MODE=tproxy SSCLASH_INTERFACE_MODE=explicit CLASH_CORE_PRESENT=1 CLASH_RUNNING=1 SSCLASH_NFT=1 CLASH_RULES_PRESENT=1 SSCLASH_POLICY_OK=1
 run_case "ssclash-invalid-config" '"id":"ssclash".*"service_state":"not_configured".*"configuration_state":"missing"' \
-	NEOVPN_PACKAGES="luci-app-ssclash" SSCLASH_PRESENT=1 MIHOMO_PRESENT=1
+	NEOVPN_PACKAGES="luci-app-ssclash" CLASH_CORE_PRESENT=1
 
 run_case "podkop-and-ssclash" '"installed_count":2.*"id":"podkop".*"traffic_state":"active".*"id":"ssclash".*"traffic_state":"active"' \
-	NEOVPN_PACKAGES="podkop luci-app-podkop luci-app-ssclash" PODKOP_PRESENT=1 PODKOP_CONFIGURED=1 SINGBOX_RUNNING=1 PODKOP_ROUTE=1 SSCLASH_PRESENT=1 SSCLASH_CONFIGURED=1 MIHOMO_PRESENT=1 MIHOMO_RUNNING=1 SSCLASH_ROUTE=1
+	NEOVPN_PACKAGES="podkop luci-app-podkop luci-app-ssclash" PODKOP_PRESENT=1 PODKOP_CONFIGURED=1 SINGBOX_RUNNING=1 PODKOP_ROUTE=1 SSCLASH_PRESENT=1 SSCLASH_SETTINGS=1 CLASH_CORE_PRESENT=1 CLASH_RUNNING=1 SSCLASH_NFT=1 CLASH_RULES_PRESENT=1 SSCLASH_POLICY_OK=1
 run_case "netshift-and-ssclash" '"installed_count":2.*"id":"ssclash".*"traffic_state":"active".*"id":"netshift".*"traffic_state":"active"' \
-	NEOVPN_PACKAGES="netshift luci-app-netshift luci-app-ssclash" NETSHIFT_PRESENT=1 NETSHIFT_CONFIGURED=1 SINGBOX_RUNNING=1 NETSHIFT_ROUTE=1 SSCLASH_PRESENT=1 SSCLASH_CONFIGURED=1 MIHOMO_PRESENT=1 MIHOMO_RUNNING=1 SSCLASH_ROUTE=1
+	NEOVPN_PACKAGES="netshift luci-app-netshift luci-app-ssclash" NETSHIFT_PRESENT=1 NETSHIFT_CONFIGURED=1 SINGBOX_RUNNING=1 NETSHIFT_ROUTE=1 SSCLASH_PRESENT=1 SSCLASH_SETTINGS=1 CLASH_CORE_PRESENT=1 CLASH_RUNNING=1 SSCLASH_NFT=1 CLASH_RULES_PRESENT=1 SSCLASH_POLICY_OK=1
 run_case "mihomo-without-ssclash-not-provider" '"installed_count":0' \
 	NEOVPN_PACKAGES="mihomo" MIHOMO_PRESENT=1 MIHOMO_RUNNING=1

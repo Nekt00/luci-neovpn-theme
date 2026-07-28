@@ -49,7 +49,7 @@ mkdir -p "$rootfs"
 "$apk_tool" info --root "$rootfs" -d "$PKG_NAME" > "$tmp/deps.txt"
 "$apk_tool" info --root "$rootfs" -v "$PKG_NAME" > "$tmp/version.txt"
 
-grep -Eq "^${PKG_NAME}-(1\\.0\\.0-rc3|1\\.0\\.0-rcrc3)$" "$tmp/version.txt" || fail "invalid package version"
+grep -Eq "^${PKG_NAME}-1\\.0\\.0~rc3-r1$" "$tmp/version.txt" || fail "invalid package version"
 grep -qx 'usr/share/ucode/luci/template/themes/neovpn/header.ut' "$tmp/files.txt" || fail "theme header missing"
 grep -qx 'www/luci-static/neovpn/css/pages.css' "$tmp/files.txt" || fail "theme CSS missing"
 grep -qx 'etc/uci-defaults/30_luci-theme-neovpn' "$tmp/files.txt" || fail "uci-defaults missing"
@@ -66,8 +66,10 @@ fi
 if ! "$apk_tool" manifest "$APK" > "$tmp/manifest.txt" 2>/dev/null; then
 	"$apk_tool" info --contents --allow-untrusted "$APK" > "$tmp/manifest.txt" 2>/dev/null || true
 fi
-if grep -E 'arch[=: ][[:space:]]*[^[:space:]]+' "$tmp/manifest.txt" | grep -vq 'all'; then
-	fail "APK architecture is not all"
+if grep -E 'arch[=: ][[:space:]]*[^[:space:]]+' "$tmp/manifest.txt" > "$tmp/manifest-arch.txt"; then
+	if grep -Ev '(all|noarch)' "$tmp/manifest-arch.txt" >/dev/null; then
+		fail "APK architecture is not architecture-independent"
+	fi
 fi
 
 printf '%s\n' "release-check: OK"

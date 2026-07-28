@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-theme-neovpn
-PKG_VERSION:=1.0.0
-PKG_RELEASE:=rc3
+PKG_VERSION:=1.0.0~rc3
+PKG_RELEASE:=1
 PKG_LICENSE:=Apache-2.0
 PKG_MAINTAINER:=Nekt00 <noreply@github.com>
 PKGARCH:=all

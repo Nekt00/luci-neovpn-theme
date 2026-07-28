@@ -35,8 +35,8 @@ if find "$product" -path '*/validation/*' -print -quit | grep -q .; then
 fi
 
 grep -q 'PKG_NAME:=luci-theme-neovpn' "$product/Makefile" || fail "package name is not luci-theme-neovpn"
-grep -q 'PKG_VERSION:=1.0.0' "$product/Makefile" || fail "package version is not 1.0.0"
-grep -q 'PKG_RELEASE:=rc3' "$product/Makefile" || fail "package release is not rc3"
+grep -q 'PKG_VERSION:=1.0.0~rc3' "$product/Makefile" || fail "package version is not 1.0.0~rc3"
+grep -q 'PKG_RELEASE:=1' "$product/Makefile" || fail "package release is not 1"
 grep -q 'LUCI_DEPENDS:=+luci-base' "$product/Makefile" || fail "luci-base dependency is missing"
 grep -q 'LUCI_PKGARCH:=all' "$product/Makefile" || fail "LUCI_PKGARCH is not all"
 grep -q 'feeds/luci/luci.mk' "$product/Makefile" || fail "SDK-compatible luci.mk include is missing"

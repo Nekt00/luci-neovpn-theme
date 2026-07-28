@@ -78,7 +78,7 @@ download "$SDK_URL" "$archive"
 verify_sha256 "$archive" "$SDK_SHA256"
 
 tar --zstd -xf "$archive" -C "$workdir"
-sdk_dir="$(find "$workdir" -maxdepth 1 -type d -name 'openwrt-sdk-*' | head -n 1)"
+sdk_dir="$(find "$workdir" -maxdepth 1 -type d -name 'openwrt-sdk-*' -print -quit)"
 [ -n "$sdk_dir" ] || fail "SDK directory was not extracted"
 
 mkdir -p "$sdk_dir/package/$PKG_NAME"
@@ -97,7 +97,7 @@ sdk_apk="$sdk_dir/staging_dir/host/bin/apk"
 cp "$sdk_apk" "$DIST/openwrt-apk"
 chmod 0755 "$DIST/openwrt-apk"
 
-built_apk="$(find "$sdk_dir/bin" -type f -name "${PKG_NAME}*.apk" | head -n 1)"
+built_apk="$(find "$sdk_dir/bin" -type f -name "${PKG_NAME}*.apk" -print -quit)"
 [ -n "$built_apk" ] || fail "APK was not produced"
 
 stable="$DIST/${PKG_NAME}_${ARCH}.apk"

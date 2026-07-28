@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.0-rc3] - 2026-07-28
+## [1.0.0-rc4] - 2026-07-28
 
 - Switched release packaging from IPK/opkg to APK-only for OpenWrt 25.12.
 - Updated GitHub Actions to build with the pinned OpenWrt 25.12.4 SDK.

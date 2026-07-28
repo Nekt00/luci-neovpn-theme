@@ -6,9 +6,9 @@ The production package is located in `products/luci-theme-neovpn`.
 
 ## Project Status
 
-Current release: `v1.0.0-rc3`.
+Current release: `v1.0.0-rc4`.
 
-This is the third release candidate. The visual implementation is feature complete, while APK installation should be validated on additional OpenWrt 25.x targets before a final `v1.0.0`.
+This is the fourth release candidate. The visual implementation is feature complete, while APK installation should be validated on additional OpenWrt 25.x targets before a final `v1.0.0`.
 
 ## Supported OpenWrt Versions
 
@@ -42,10 +42,10 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/Nekt00/luci-neovpn-theme/m
 
 The installer verifies OpenWrt 25.x, LuCI, root permissions, `apk`, the release checksum, installs the APK, activates NeoVPN, clears LuCI cache, and restarts `uhttpd`.
 
-For prerelease `v1.0.0-rc3`, use an explicit release URL because GitHub `latest` does not point to prereleases:
+For prerelease `v1.0.0-rc4`, use an explicit release URL because GitHub `latest` does not point to prereleases:
 
 ```sh
-NEOVPN_RELEASE_URL="https://github.com/Nekt00/luci-neovpn-theme/releases/download/v1.0.0-rc3" \
+NEOVPN_RELEASE_URL="https://github.com/Nekt00/luci-neovpn-theme/releases/download/v1.0.0-rc4" \
 sh -c "$(wget -O- https://raw.githubusercontent.com/Nekt00/luci-neovpn-theme/main/install.sh)"
 ```
 
@@ -73,7 +73,7 @@ rm -rf /tmp/luci-indexcache /tmp/luci-modulecache/*
 Run the installer again:
 
 ```sh
-NEOVPN_RELEASE_URL="https://github.com/Nekt00/luci-neovpn-theme/releases/download/v1.0.0-rc3" \
+NEOVPN_RELEASE_URL="https://github.com/Nekt00/luci-neovpn-theme/releases/download/v1.0.0-rc4" \
 sh -c "$(wget -O- https://raw.githubusercontent.com/Nekt00/luci-neovpn-theme/main/install.sh)"
 ```
 
@@ -134,7 +134,7 @@ uci commit luci
 1. Run `make release-check`.
 2. Commit the source tree.
 3. Push `main`.
-4. Create and push tag `v1.0.0-rc3`.
+4. Create and push tag `v1.0.0-rc4`.
 5. GitHub Actions builds the APK with the pinned OpenWrt 25.12.4 SDK and publishes release assets.
 
 ## Screenshots

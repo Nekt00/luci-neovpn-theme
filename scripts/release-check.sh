@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST="$ROOT/dist"
 PKG_NAME="luci-theme-neovpn"
-VERSION="1.0.0-rc3"
+VERSION="1.0.0-rc4"
 ARCH="all"
 APK="$DIST/${PKG_NAME}_${VERSION}_${ARCH}.apk"
 STABLE="$DIST/${PKG_NAME}_${ARCH}.apk"
@@ -81,7 +81,7 @@ fi
 "$apk_tool" adbdump "$APK" > "$tmp/adbdump.txt" || fail "APK metadata is not readable"
 
 grep -Eq "(^|[[:space:]])name:[[:space:]]*${PKG_NAME}($|[[:space:]])" "$tmp/adbdump.txt" || fail "invalid package name"
-grep -Eq '(^|[[:space:]])version:[[:space:]]*1\.0\.0_rc3-r1($|[[:space:]])' "$tmp/adbdump.txt" || fail "invalid package version"
+grep -Eq '(^|[[:space:]])version:[[:space:]]*1\.0\.0_rc4-r1($|[[:space:]])' "$tmp/adbdump.txt" || fail "invalid package version"
 grep -Eq '(^|[[:space:]])arch:[[:space:]]*(all|noarch)($|[[:space:]])' "$tmp/adbdump.txt" || fail "APK architecture is not architecture-independent"
 grep -Eq '(^|[[:space:]])luci-base($|[[:space:]<>=~])' "$tmp/adbdump.txt" || fail "luci-base dependency missing"
 grep -Eq '(^|[[:space:]])header\.ut($|[[:space:]])' "$tmp/adbdump.txt" || fail "theme header missing"

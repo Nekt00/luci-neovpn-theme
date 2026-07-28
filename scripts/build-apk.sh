@@ -12,7 +12,7 @@ SDK_URL="https://downloads.openwrt.org/releases/${SDK_VERSION}/targets/${SDK_TAR
 SDK_SHA256="28e004c1be4d215d19c1f12a6aa4c8d8f80689549eb707d0ff5a71f16fa8d05f"
 
 PKG_NAME="luci-theme-neovpn"
-VERSION="1.0.0-rc3"
+VERSION="1.0.0-rc4"
 ARCH="all"
 
 fail() {

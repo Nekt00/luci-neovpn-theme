@@ -151,6 +151,7 @@
     service: "Service",
     backend: "Backend",
     backendStatus: "Backend status",
+    errors: "Errors",
     routingMode: "Routing mode",
     configuration: "Configuration",
     lastChecked: "Last checked",
@@ -164,6 +165,18 @@
     running: "Running",
     connectionError: "Connection error",
     unableToVerify: "Unable to verify",
+    checkSucceeded: "success",
+    checkWarning: "with warning",
+    checkError: "error",
+    checkUnavailable: "Check unavailable",
+    noErrors: "No errors",
+    notDetermined: "Not determined",
+    errorRoutingNotActive: "VPN routing is not active",
+    errorTrafficUnverified: "VPN traffic could not be verified",
+    errorBackendStopped: "Backend is not running",
+    errorServiceStopped: "Application is not active",
+    errorConfigMissing: "Configuration is missing",
+    errorCoreMissing: "Mihomo core is missing",
     degraded: "Degraded",
     conflict: "Conflict",
     configurationRequired: "Configuration required",
@@ -220,6 +233,8 @@
   var RU_STRINGS = {
     "VPN and traffic routing": "VPN и маршрутизация трафика",
     "VPN traffic": "Трафик через VPN",
+    "Protocol": "Протокол",
+    "Errors": "Ошибки",
     "Routing mode": "Режим",
     "Configuration": "Конфигурация",
     "Last checked": "Последняя проверка",
@@ -229,6 +244,18 @@
     "Inactive": "Неактивен",
     "Connection error": "Ошибка подключения",
     "Unable to verify": "Не удалось проверить",
+    "success": "успешно",
+    "with warning": "с предупреждением",
+    "error": "ошибка",
+    "Check unavailable": "Проверка недоступна",
+    "No errors": "Ошибок нет",
+    "Not determined": "Не определён",
+    "VPN routing is not active": "Маршрутизация через VPN не активна",
+    "VPN traffic could not be verified": "Трафик через VPN не удалось проверить",
+    "Backend is not running": "Backend не запущен",
+    "Application is not active": "Приложение не активно",
+    "Configuration is missing": "Конфигурация отсутствует",
+    "Mihomo core is missing": "Ядро Mihomo отсутствует",
     "Selective": "Выборочный",
     "All traffic": "Весь трафик",
     "Rules": "По правилам",
@@ -1176,6 +1203,32 @@
     }
   }
 
+  function formatVpnProviderLastCheck(provider, fallbackEpochMs) {
+    var lastCheck = provider && provider.last_check ? provider.last_check : null;
+    var timestamp = lastCheck && lastCheck.timestamp ? Number(lastCheck.timestamp) * 1000 : fallbackEpochMs;
+    var result = lastCheck && lastCheck.result ? lastCheck.result : "unknown";
+    var time = formatVpnCheckedTime(timestamp);
+    var resultText = translate(STRINGS.checkUnavailable);
+
+    switch (result) {
+    case "success":
+      resultText = translate(STRINGS.checkSucceeded);
+      break;
+    case "warning":
+      resultText = translate(STRINGS.checkWarning);
+      break;
+    case "error":
+      resultText = translate(STRINGS.checkError);
+      break;
+    }
+
+    if (!timestamp || result === "unknown") {
+      return resultText;
+    }
+
+    return time + " · " + resultText;
+  }
+
   function formatBytes(bytes) {
     var value = safePositiveNumber(bytes);
     var units = ["B", "KB", "MB", "GB", "TB"];
@@ -1950,6 +2003,10 @@
   }
 
   function getVpnServiceState(provider) {
+    if (provider && provider.application_state) {
+      return provider.application_state === "active" ? "running" : provider.application_state === "inactive" ? "stopped" : "unknown";
+    }
+
     if (provider && provider.service_state) {
       return provider.service_state;
     }
@@ -1979,6 +2036,10 @@
 
   function getVpnServiceLabel(state) {
     switch (state) {
+    case "active":
+      return translate(STRINGS.active);
+    case "inactive":
+      return translate(STRINGS.inactive);
     case "running":
       return translate(STRINGS.running);
     case "stopped":
@@ -2003,6 +2064,25 @@
     }
   }
 
+  function getVpnApplicationState(provider) {
+    if (provider && provider.application_state) {
+      return provider.application_state;
+    }
+
+    return getVpnServiceState(provider) === "running" ? "active" : "inactive";
+  }
+
+  function getVpnApplicationLabel(state) {
+    switch (state) {
+    case "active":
+      return translate(STRINGS.active);
+    case "inactive":
+      return translate(STRINGS.inactive);
+    default:
+      return translate(STRINGS.unknown);
+    }
+  }
+
   function getVpnStateTone(state) {
     switch (state) {
     case "running":
@@ -2016,6 +2096,55 @@
     default:
       return "neutral";
     }
+  }
+
+  function formatVpnProtocol(provider) {
+    var protocol = provider && provider.protocol ? provider.protocol : null;
+    var display = protocol && protocol.display ? protocol.display : "";
+
+    if (!display || display === "Not determined") {
+      return translate(STRINGS.notDetermined);
+    }
+
+    return display;
+  }
+
+  function formatVpnErrors(provider) {
+    var errors = provider && Array.isArray(provider.errors) ? provider.errors : [];
+    var first = errors[0];
+    var extra = errors.length - 1;
+    var message = first && first.message ? first.message : "";
+
+    if (!first) {
+      return translate(STRINGS.noErrors);
+    }
+
+    switch (first.code) {
+    case "routing_not_active":
+      message = translate(STRINGS.errorRoutingNotActive);
+      break;
+    case "traffic_unverified":
+      message = translate(STRINGS.errorTrafficUnverified);
+      break;
+    case "backend_stopped":
+      message = translate(STRINGS.errorBackendStopped);
+      break;
+    case "service_stopped":
+      message = translate(STRINGS.errorServiceStopped);
+      break;
+    case "config_missing":
+      message = translate(STRINGS.errorConfigMissing);
+      break;
+    case "core_missing":
+      message = translate(STRINGS.errorCoreMissing);
+      break;
+    }
+
+    if (extra > 0) {
+      return message + " · +" + extra;
+    }
+
+    return message;
   }
 
   function createVpnStatusBadge(tone, label) {
@@ -2103,24 +2232,24 @@
     var statuses = document.createElement("div");
     var footer = document.createElement("div");
     var action = document.createElement("a");
-    var serviceState = getVpnServiceState(provider);
+    var applicationState = getVpnApplicationState(provider);
     var trafficState = getVpnTrafficState(provider);
 
     row.className = "neovpn-console-vpn-provider";
     row.dataset.provider = provider && provider.id ? provider.id : "unknown";
-    row.dataset.vpnServiceState = serviceState;
+    row.dataset.vpnServiceState = applicationState;
     row.dataset.vpnTrafficState = trafficState;
 
     header.className = "neovpn-console-vpn-provider__header";
     name.textContent = provider && provider.name ? provider.name : translate(STRINGS.unknown);
     header.appendChild(name);
-    header.appendChild(createVpnStatusBadge(getVpnStateTone(serviceState), getVpnServiceLabel(serviceState)));
+    header.appendChild(createVpnStatusBadge(getVpnStateTone(applicationState), getVpnApplicationLabel(applicationState)));
 
     statuses.className = "neovpn-console-vpn__status-list";
+    statuses.appendChild(createVpnValueRow(translate(STRINGS.protocol), formatVpnProtocol(provider)));
     statuses.appendChild(createVpnStatusRow(translate(STRINGS.vpnTraffic), trafficState, getVpnTrafficLabel(trafficState)));
-    statuses.appendChild(createVpnValueRow(translate(STRINGS.routingMode), formatVpnMode(provider && provider.routing_mode)));
-    statuses.appendChild(createVpnValueRow(translate(STRINGS.configuration), formatVpnConfigurationState(provider && provider.configuration_state)));
-    statuses.appendChild(createVpnValueRow(translate(STRINGS.lastChecked), formatVpnCheckedTime(lastCheckedAt)));
+    statuses.appendChild(createVpnValueRow(translate(STRINGS.lastChecked), formatVpnProviderLastCheck(provider, lastCheckedAt)));
+    statuses.appendChild(createVpnValueRow(translate(STRINGS.errors), formatVpnErrors(provider)));
 
     footer.className = "neovpn-console-vpn-provider__footer";
 

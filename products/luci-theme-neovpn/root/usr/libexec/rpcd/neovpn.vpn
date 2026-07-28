@@ -1,5 +1,21 @@
 #!/bin/sh
 
+SNAPSHOT_READY=0
+SNAPSHOT_APK=""
+SNAPSHOT_APK_VERSIONS=""
+SNAPSHOT_SERVICES=""
+SNAPSHOT_PS=""
+SNAPSHOT_IP_LINKS=""
+SNAPSHOT_IP_RULES=""
+SNAPSHOT_IP_ROUTES=""
+SNAPSHOT_UCI_PODKOP=""
+SNAPSHOT_UCI_NETSHIFT=""
+SNAPSHOT_UCI_SSCLASH=""
+SNAPSHOT_UCI_CLASH=""
+SNAPSHOT_PODKOP_ROUTING=0
+SNAPSHOT_NETSHIFT_ROUTING=0
+SNAPSHOT_NOW=0
+
 json_escape() {
   printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g; s/	/\\t/g'
 }
@@ -16,49 +32,113 @@ json_null_or_string() {
   [ -n "$1" ] && json_string "$1" || printf 'null'
 }
 
+json_number() {
+  case "${1:-}" in
+    ''|*[!0-9]*) printf '0' ;;
+    *) printf '%s' "$1" ;;
+  esac
+}
+
+collect_snapshot() {
+  [ "$SNAPSHOT_READY" = "1" ] && return
+
+  SNAPSHOT_NOW="$(date +%s 2>/dev/null || printf '0')"
+  SNAPSHOT_APK="$(apk info 2>/dev/null || true)"
+  SNAPSHOT_APK_VERSIONS="$(apk info -v 2>/dev/null || true)"
+  SNAPSHOT_SERVICES="$(ubus call service list 2>/dev/null || true)"
+  SNAPSHOT_PS="$(ps w 2>/dev/null || ps 2>/dev/null || true)"
+  SNAPSHOT_IP_LINKS="$(ip -o link show 2>/dev/null || true)"
+  SNAPSHOT_IP_RULES="$(ip rule show 2>/dev/null || true)"
+  SNAPSHOT_IP_ROUTES="$(ip route show table all 2>/dev/null || true)"
+  SNAPSHOT_UCI_PODKOP="$(uci -q show podkop 2>/dev/null || true)"
+  SNAPSHOT_UCI_NETSHIFT="$(uci -q show netshift 2>/dev/null || true)"
+  SNAPSHOT_UCI_SSCLASH="$(uci -q show ssclash 2>/dev/null || true)"
+  SNAPSHOT_UCI_CLASH="$(uci -q show clash 2>/dev/null || true)"
+
+  if command -v nft >/dev/null 2>&1; then
+    nft list table inet PodkopTable >/dev/null 2>&1 && SNAPSHOT_PODKOP_ROUTING=1
+    nft list table inet NetShiftTable >/dev/null 2>&1 && SNAPSHOT_NETSHIFT_ROUTING=1
+    nft list table inet netshift >/dev/null 2>&1 && SNAPSHOT_NETSHIFT_ROUTING=1
+  fi
+
+  printf '%s\n%s\n' "$SNAPSHOT_IP_RULES" "$SNAPSHOT_IP_ROUTES" | grep -Eiq 'netshift' && SNAPSHOT_NETSHIFT_ROUTING=1
+
+  SNAPSHOT_READY=1
+}
+
 exists_path() {
   [ -e "$1" ]
 }
 
 package_installed() {
-  local name="$1"
+  collect_snapshot
+  printf '%s\n' "$SNAPSHOT_APK" | grep -qx "$1"
+}
 
-  if command -v apk >/dev/null 2>&1; then
-    apk info -e "$name" >/dev/null 2>&1
-    return $?
-  fi
+package_any() {
+  local name
 
-  if command -v opkg >/dev/null 2>&1; then
-    opkg status "$name" 2>/dev/null | grep -q '^Status: .* installed'
-    return $?
-  fi
+  for name in "$@"; do
+    package_installed "$name" && return 0
+  done
 
   return 1
 }
 
 package_version() {
   local name="$1"
-  local version=""
 
-  if command -v apk >/dev/null 2>&1; then
-    version="$(apk info -v "$name" 2>/dev/null | sed -n "s/^$name-//p" | head -n 1)"
-  elif command -v opkg >/dev/null 2>&1; then
-    version="$(opkg status "$name" 2>/dev/null | sed -n 's/^Version: //p' | head -n 1)"
-  fi
+  collect_snapshot
+  printf '%s\n' "$SNAPSHOT_APK_VERSIONS" | sed -n "s/^$name-//p" | head -n 1
+}
 
-  printf '%s' "$version"
+first_package_version() {
+  local name version
+
+  for name in "$@"; do
+    version="$(package_version "$name")"
+    [ -n "$version" ] && {
+      printf '%s' "$version"
+      return
+    }
+  done
+}
+
+service_block() {
+  local name="$1"
+
+  collect_snapshot
+  printf '%s\n' "$SNAPSHOT_SERVICES" | awk -v svc="$name" '
+    $0 ~ "^[[:space:]]*\\{?[[:space:]]*\"" svc "\":[[:space:]]*\\{" { active = 1; depth = 0 }
+    active {
+      line = $0
+      opens = gsub(/\{/, "{", line)
+      line = $0
+      closes = gsub(/\}/, "}", line)
+      depth += opens - closes
+      print
+      if (depth <= 0) {
+        exit
+      }
+    }
+  '
 }
 
 service_running() {
-  local name="$1"
-
-  ubus call service list "{\"name\":\"$name\"}" 2>/dev/null | grep -q '"running"[[:space:]]*:[[:space:]]*true'
+  service_block "$1" | grep -q '"running"[[:space:]]*:[[:space:]]*true'
 }
 
 service_enabled() {
   local name="$1"
 
   [ -x "/etc/init.d/$name" ] && "/etc/init.d/$name" enabled >/dev/null 2>&1
+}
+
+process_running() {
+  local pattern="$1"
+
+  collect_snapshot
+  printf '%s\n' "$SNAPSHOT_PS" | grep -Eq "$pattern"
 }
 
 binary_exists() {
@@ -75,110 +155,20 @@ binary_exists() {
   return 1
 }
 
-uci_section_count() {
-  local config="$1"
-
-  uci -q show "$config" 2>/dev/null | sed -n "s/^$config\\.\\([^.=]*\\)=.*/\\1/p" | sort -u | wc -l | tr -d ' '
+uci_section_count_from() {
+  printf '%s\n' "$1" | sed -n "s/^$2\\.\\([^.=]*\\)=.*/\\1/p" | sort -u | wc -l | tr -d ' '
 }
 
-uci_configured() {
-  local config="$1"
-
-  [ -s "/etc/config/$config" ] && [ "$(uci_section_count "$config")" -gt 0 ]
-}
-
-uci_mode() {
-  local config="$1"
-  local value=""
-
-  value="$(uci -q show "$config" 2>/dev/null | sed -n "s/^$config\\.[^.]*\\.\\(mode\\|routing_mode\\|proxy_mode\\|operation_mode\\)=['\"]*\\([^'\"]*\\)['\"]*$/\\2/p" | head -n 1)"
-
-  case "$value" in
-    global|Global|GLOBAL) printf 'global' ;;
-    selective|Selective|SELECTIVE) printf 'selective' ;;
-    *) printf '%s' "$value" ;;
-  esac
-}
-
-uci_has_any_option() {
-  local config="$1"
-  shift
-  local option=""
+uci_has_any_option_from() {
+  local data="$1" config="$2" option
+  shift 2
 
   for option in "$@"; do
     [ -n "$option" ] || continue
-    uci -q show "$config" 2>/dev/null | grep -Eq "^$config\\.[^.]*\\.$option=['\"]?[^'\"]+" && return 0
+    printf '%s\n' "$data" | grep -Eq "^$config\\.[^.]*\\.$option=['\"]?[^'\"]+" && return 0
   done
 
   return 1
-}
-
-provider_routing_mode() {
-  local id="$1" mode="$2"
-
-  case "$id:$mode" in
-    ssclash:rule|ssclash:rules|ssclash:Rule|ssclash:Rules) printf 'rules'; return ;;
-    ssclash:global|ssclash:Global|ssclash:GLOBAL) printf 'global'; return ;;
-    ssclash:direct|ssclash:Direct|ssclash:DIRECT) printf 'direct'; return ;;
-    podkop:global|podkop:Global|podkop:GLOBAL|netshift:global|netshift:Global|netshift:GLOBAL) printf 'global'; return ;;
-    podkop:selective|podkop:Selective|podkop:SELECTIVE|netshift:selective|netshift:Selective|netshift:SELECTIVE) printf 'selective'; return ;;
-  esac
-
-  case "$id" in
-    podkop)
-      uci_has_any_option podkop community_lists user_domains user_subnets remote_domain_lists remote_subnet_lists && printf 'selective' && return
-      ;;
-    netshift)
-      uci_has_any_option netshift community_lists user_domains user_subnets routes rules include_domains include_subnets && printf 'selective' && return
-      ;;
-  esac
-
-  printf 'unknown'
-}
-
-provider_configuration_state() {
-  local id="$1" configured="$2"
-
-  [ "$configured" = "1" ] || {
-    printf 'missing'
-    return
-  }
-
-  case "$id" in
-    podkop)
-      uci_has_any_option podkop proxy_string outbound_json selector_proxy_links urltest_proxy_links community_lists user_domains user_subnets && printf 'ready' || printf 'unknown'
-      ;;
-    netshift)
-      uci_has_any_option netshift proxy_string outbound_json server subscription url routes rules include_domains include_subnets && printf 'ready' || printf 'unknown'
-      ;;
-    ssclash)
-      [ -s /etc/config/ssclash ] || [ -s /etc/config/clash ] || [ -s /opt/clash/config.yaml ] || [ -s /opt/clash/config.yml ] && printf 'ready' || printf 'missing'
-      ;;
-    *)
-      printf 'unknown'
-      ;;
-  esac
-}
-
-traffic_mechanism_active() {
-  local token="$1"
-
-  if command -v ip >/dev/null 2>&1; then
-    ip -o link show 2>/dev/null | grep -Eiq "(tun|tproxy|sing|mihomo|clash|$token)" && return 0
-    ip rule show 2>/dev/null | grep -Eiq "(fwmark|lookup|$token)" && return 0
-    ip route show table all 2>/dev/null | grep -Eiq "(tun|mihomo|sing|clash|$token)" && return 0
-  fi
-
-  if command -v nft >/dev/null 2>&1; then
-    nft list ruleset 2>/dev/null | grep -Eiq "(tproxy|fwmark|sing-box|mihomo|clash|$token)" && return 0
-  fi
-
-  return 1
-}
-
-podkop_routing_active() {
-  command -v nft >/dev/null 2>&1 || return 1
-  nft list table inet PodkopTable >/dev/null 2>&1
 }
 
 menu_url() {
@@ -199,180 +189,402 @@ menu_url() {
   return 1
 }
 
+provider_routing_mode() {
+  local id="$1" mode="$2"
+
+  case "$id:$mode" in
+    ssclash:rule|ssclash:rules|ssclash:Rule|ssclash:Rules) printf 'rules'; return ;;
+    ssclash:global|ssclash:Global|ssclash:GLOBAL) printf 'global'; return ;;
+    ssclash:direct|ssclash:Direct|ssclash:DIRECT) printf 'direct'; return ;;
+    podkop:global|podkop:Global|podkop:GLOBAL|netshift:global|netshift:Global|netshift:GLOBAL) printf 'global'; return ;;
+    podkop:selective|podkop:Selective|podkop:SELECTIVE|netshift:selective|netshift:Selective|netshift:SELECTIVE) printf 'selective'; return ;;
+  esac
+
+  case "$id" in
+    podkop)
+      uci_has_any_option_from "$SNAPSHOT_UCI_PODKOP" podkop community_lists user_domains user_subnets remote_domain_lists remote_subnet_lists && printf 'selective' && return
+      ;;
+    netshift)
+      uci_has_any_option_from "$SNAPSHOT_UCI_NETSHIFT" netshift community_lists user_domains user_subnets routes rules include_domains include_subnets && printf 'selective' && return
+      ;;
+  esac
+
+  printf 'unknown'
+}
+
+provider_configuration_state() {
+  local id="$1" configured="$2"
+
+  [ "$configured" = "1" ] || {
+    printf 'missing'
+    return
+  }
+
+  case "$id" in
+    podkop)
+      uci_has_any_option_from "$SNAPSHOT_UCI_PODKOP" podkop proxy_string outbound_json selector_proxy_links urltest_proxy_links community_lists user_domains user_subnets && printf 'ready' || printf 'unknown'
+      ;;
+    netshift)
+      uci_has_any_option_from "$SNAPSHOT_UCI_NETSHIFT" netshift proxy_string outbound_json server subscription url routes rules include_domains include_subnets && printf 'ready' || printf 'unknown'
+      ;;
+    ssclash)
+      if [ -n "$SNAPSHOT_UCI_SSCLASH" ] || [ -n "$SNAPSHOT_UCI_CLASH" ] || [ -s /opt/clash/config.yaml ] || [ -s /opt/clash/config.yml ]; then
+        printf 'ready'
+      else
+        printf 'missing'
+      fi
+      ;;
+    *)
+      printf 'unknown'
+      ;;
+  esac
+}
+
+read_limited_file() {
+  local file="$1"
+
+  [ -r "$file" ] || return 0
+  dd if="$file" bs=8192 count=2 2>/dev/null || true
+}
+
+protocol_from_text() {
+  local data="$1"
+  local type="" security="" transport="" display="" count=1
+
+  printf '%s\n' "$data" | grep -Eiq 'hysteria2|hy2' && type="hysteria2"
+  [ -n "$type" ] || printf '%s\n' "$data" | grep -Eiq 'shadowsocks|ss://' && type="shadowsocks"
+  [ -n "$type" ] || printf '%s\n' "$data" | grep -Eiq 'trojan' && type="trojan"
+  [ -n "$type" ] || printf '%s\n' "$data" | grep -Eiq 'amneziawg|awg' && type="amneziawg"
+  [ -n "$type" ] || printf '%s\n' "$data" | grep -Eiq 'wireguard' && type="wireguard"
+  [ -n "$type" ] || printf '%s\n' "$data" | grep -Eiq 'vless|vless://' && type="vless"
+  [ -n "$type" ] || printf '%s\n' "$data" | grep -Eiq 'vmess|vmess://' && type="vmess"
+
+  printf '%s\n' "$data" | grep -Eiq 'reality' && security="reality"
+  [ -n "$security" ] || printf '%s\n' "$data" | grep -Eiq 'tls' && security="tls"
+
+  printf '%s\n' "$data" | grep -Eiq 'xhttp' && transport="xhttp"
+  [ -n "$transport" ] || printf '%s\n' "$data" | grep -Eiq 'grpc' && transport="grpc"
+  [ -n "$transport" ] || printf '%s\n' "$data" | grep -Eiq 'websocket|ws' && transport="ws"
+  [ -n "$transport" ] || printf '%s\n' "$data" | grep -Eiq 'tcp' && transport="tcp"
+
+  case "$type" in
+    vless) display="VLESS" ;;
+    vmess) display="VMess" ;;
+    hysteria2) display="Hysteria2" ;;
+    shadowsocks) display="Shadowsocks" ;;
+    trojan) display="Trojan" ;;
+    amneziawg) display="AmneziaWG" ;;
+    wireguard) display="WireGuard" ;;
+    *) display="Not determined" ;;
+  esac
+
+  case "$security" in
+    reality) display="$display · Reality" ;;
+    tls) display="$display · TLS" ;;
+  esac
+
+  case "$transport" in
+    xhttp) display="$display · XHTTP" ;;
+    grpc) display="$display · gRPC" ;;
+    ws) display="$display · WebSocket" ;;
+    tcp) display="$display · TCP" ;;
+  esac
+
+  printf '%s|%s|%s|%s|%s' "$type" "$security" "$transport" "$display" "$count"
+}
+
+emit_protocol() {
+  local protocol="$1" type security transport display count
+
+  type="$(printf '%s' "$protocol" | awk -F '|' '{print $1}')"
+  security="$(printf '%s' "$protocol" | awk -F '|' '{print $2}')"
+  transport="$(printf '%s' "$protocol" | awk -F '|' '{print $3}')"
+  display="$(printf '%s' "$protocol" | awk -F '|' '{print $4}')"
+  count="$(printf '%s' "$protocol" | awk -F '|' '{print $5}')"
+
+  printf '{"type":'
+  json_null_or_string "$type"
+  printf ',"security":'
+  json_null_or_string "$security"
+  printf ',"transport":'
+  json_null_or_string "$transport"
+  printf ',"display":'
+  json_string "${display:-Not determined}"
+  printf ',"profile_count":'
+  json_number "$count"
+  printf '}'
+}
+
+last_check_result() {
+  local health="$1" traffic_state="$2"
+
+  case "$health:$traffic_state" in
+    ok:active) printf 'success' ;;
+    error:*) printf 'error' ;;
+    degraded:*|*:unknown) printf 'warning' ;;
+    *) printf 'unknown' ;;
+  esac
+}
+
+emit_last_check() {
+  local result="$1" source="$2"
+
+  printf '{"timestamp":'
+  json_number "$SNAPSHOT_NOW"
+  printf ',"result":'
+  json_string "$result"
+  printf ',"source":'
+  json_string "$source"
+  printf '}'
+}
+
+error_message() {
+  case "$1" in
+    routing_not_active) printf 'VPN routing is not active' ;;
+    traffic_unverified) printf 'VPN traffic could not be verified' ;;
+    backend_stopped) printf 'Backend is not running' ;;
+    service_stopped) printf 'Application is not active' ;;
+    config_missing) printf 'Configuration is missing' ;;
+    core_missing) printf 'Mihomo core is missing' ;;
+    *) printf 'Status requires attention' ;;
+  esac
+}
+
+emit_errors() {
+  local code="$1" severity="$2"
+
+  if [ -z "$code" ]; then
+    printf '[]'
+    return
+  fi
+
+  printf '[{"code":'
+  json_string "$code"
+  printf ',"message":'
+  json_string "$(error_message "$code")"
+  printf ',"severity":'
+  json_string "$severity"
+  printf '}]'
+}
+
+application_state_from_service() {
+  case "$1" in
+    running) printf 'active' ;;
+    not_configured|stopped|starting) printf 'inactive' ;;
+    *) printf 'unknown' ;;
+  esac
+}
+
 provider_json() {
-  local id="$1" name="$2" engine="$3" installed="$4" ui_installed="$5" version="$6"
-  local service_name="$7" service_is_running="$8" service_is_enabled="$9"
-  local backend_name="${10}" backend_is_running="${11}" backend_version="${12}"
-  local configured="${13}" mode="${14}" active_items="${15}" health="${16}" reason="${17}" manage_url="${18}"
-  local service_state="${19}" traffic_state="${20}" traffic_reason="${21}"
-  local routing_mode="${22}" configuration_state="${23}"
-  shift 23
-  local controller_running="${1:-$service_is_running}"
-  local routing_active="${2:-0}"
-  local routing_mechanism="${3:-}"
-  local routing_table="${4:-}"
+  local id="$1" name="$2" installed="$3" version="$4" configured="$5" enabled="$6"
+  local service_state="$7" traffic_state="$8" health="$9" reason="${10}" mode="${11}" routing_mode="${12}"
+  local configuration_state="${13}" backend="${14}" manage_url="${15}" ui_installed="${16}" active_items="${17}"
+  local service_name="${18}" effective_running="${19}" controller_running="${20}" backend_running="${21}"
+  local routing_active="${22}" routing_mechanism="${23}" routing_table="${24}" runtime_owner="${25}"
+  local protocol="${26}" application_state="" application_reason="" error_severity="warning" check_result=""
+
+  application_state="$(application_state_from_service "$service_state")"
+  application_reason="$reason"
+  [ "$health" = "error" ] && error_severity="error"
+  check_result="$(last_check_result "$health" "$traffic_state")"
 
   printf '{'
   printf '"id":'; json_string "$id"; printf ','
   printf '"name":'; json_string "$name"; printf ','
-  printf '"engine":'; json_string "$engine"; printf ','
   printf '"installed":'; json_bool "$installed"; printf ','
-  printf '"ui_installed":'; json_bool "$ui_installed"; printf ','
   printf '"version":'; json_null_or_string "$version"; printf ','
+  printf '"configured":'; json_bool "$configured"; printf ','
+  printf '"enabled":'; json_bool "$enabled"; printf ','
+  printf '"application_state":'; json_string "$application_state"; printf ','
+  printf '"application_reason":'; json_null_or_string "$application_reason"; printf ','
+  printf '"protocol":'; emit_protocol "$protocol"; printf ','
   printf '"service_state":'; json_string "$service_state"; printf ','
   printf '"traffic_state":'; json_string "$traffic_state"; printf ','
-  printf '"traffic_reason":'; json_null_or_string "$traffic_reason"; printf ','
-  printf '"service":{"name":'; json_string "$service_name"; printf ',"running":'; json_bool "$service_is_running"; printf ',"enabled":'; json_bool "$service_is_enabled"; printf ',"controller_running":'; json_bool "$controller_running"; printf '},'
-  printf '"backend":{"name":'; json_string "$backend_name"; printf ',"running":'; json_bool "$backend_is_running"; printf ',"version":'; json_null_or_string "$backend_version"; printf '},'
-  printf '"routing":{"active":'; json_bool "$routing_active"; printf ',"mechanism":'; json_null_or_string "$routing_mechanism"; printf ',"table":'; json_null_or_string "$routing_table"; printf '},'
-  printf '"configured":'; json_bool "$configured"; printf ','
+  printf '"traffic_reason":'; json_null_or_string "$reason"; printf ','
+  printf '"last_check":'; emit_last_check "$check_result" runtime_snapshot; printf ','
+  printf '"errors":'; emit_errors "$reason" "$error_severity"; printf ','
+  printf '"health":'; json_string "$health"; printf ','
+  printf '"reason":'; json_null_or_string "$reason"; printf ','
   printf '"mode":'; json_null_or_string "$mode"; printf ','
   printf '"routing_mode":'; json_string "$routing_mode"; printf ','
   printf '"configuration_state":'; json_string "$configuration_state"; printf ','
-  printf '"active_items":%s,' "${active_items:-0}"
-  printf '"health":'; json_string "$health"; printf ','
-  printf '"reason":'; json_null_or_string "$reason"; printf ','
-  printf '"manage_url":'; json_null_or_string "$manage_url"
+  printf '"backend":'; json_null_or_string "$backend"; printf ','
+  printf '"manage_url":'; json_null_or_string "$manage_url"; printf ','
+  printf '"ui_installed":'; json_bool "$ui_installed"; printf ','
+  printf '"active_items":'; json_number "$active_items"; printf ','
+  printf '"service":{"name":'; json_null_or_string "$service_name"; printf ',"running":'; json_bool "$effective_running"; printf ',"enabled":'; json_bool "$enabled"; printf ',"controller_running":'; json_bool "$controller_running"; printf '},'
+  printf '"backend_info":{"name":'; json_null_or_string "$backend"; printf ',"running":'; json_bool "$backend_running"; printf ',"owner":'; json_null_or_string "$runtime_owner"; printf '},'
+  printf '"routing":{"active":'; json_bool "$routing_active"; printf ',"mechanism":'; json_null_or_string "$routing_mechanism"; printf ',"table":'; json_null_or_string "$routing_table"; printf '}'
   printf '}'
 }
 
-podkop_status() {
-  local pkg=0 ui=0 init=0 config=0 installed=0 controller=0 effective_running=0 enabled=0 backend=0 configured=0
-  local route=0 version="" count=0 mode="" routing_mode="unknown" configuration_state="unknown" health="unknown" reason="" url="" service_state="unknown" traffic_state="unknown" traffic_reason=""
+provider_registry() {
+  printf '%s\n' podkop ssclash netshift
+}
 
-  package_installed podkop && pkg=1
+singbox_running() {
+  service_running sing-box || process_running '(^|[ /])sing-box([ ]|$)'
+}
+
+podkop_provider() {
+  local installed=0 ui=0 controller=0 enabled=0 backend=0 configured=0 route=0 effective=0
+  local version="" count=0 mode="" routing_mode="unknown" configuration_state="unknown"
+  local service_state="unknown" traffic_state="unknown" health="unknown" reason="" url="" protocol=""
+
+  package_any podkop luci-app-podkop || exists_path /etc/init.d/podkop || exists_path /etc/config/podkop || return 1
+  installed=1
   package_installed luci-app-podkop && ui=1
-  exists_path /etc/init.d/podkop && init=1
-  exists_path /etc/config/podkop && config=1
-  [ "$pkg$ui$init$config" != "0000" ] && installed=1
-  [ "$installed" = "1" ] || return 1
-
   service_running podkop && controller=1
   service_enabled podkop && enabled=1
-  if service_running sing-box || pidof sing-box >/dev/null 2>&1; then
-    backend=1
+  singbox_running && backend=1
+  [ "$(uci_section_count_from "$SNAPSHOT_UCI_PODKOP" podkop)" -gt 0 ] && configured=1
+  [ "$SNAPSHOT_PODKOP_ROUTING" = "1" ] && route=1
+  if [ "$backend" = "1" ] || [ "$controller" = "1" ]; then
+    effective=1
   fi
-  uci_configured podkop && configured=1
-  podkop_routing_active && route=1
-  version="$(package_version podkop)"
-  count="$(uci_section_count podkop)"
-  mode="$(uci_mode podkop)"
+  version="$(first_package_version podkop luci-app-podkop)"
+  count="$(uci_section_count_from "$SNAPSHOT_UCI_PODKOP" podkop)"
+  mode="$(printf '%s\n' "$SNAPSHOT_UCI_PODKOP" | sed -n "s/^podkop\\.[^.]*\\.\\(mode\\|routing_mode\\|proxy_mode\\)=['\"]*\\([^'\"]*\\)['\"]*$/\\2/p" | head -n 1)"
   routing_mode="$(provider_routing_mode podkop "$mode")"
   configuration_state="$(provider_configuration_state podkop "$configured")"
+  protocol="$(protocol_from_text "$(printf '%s\n' "$SNAPSHOT_UCI_PODKOP"; read_limited_file /etc/sing-box/config.json)")"
   [ "$ui" = "1" ] && url="$(menu_url podkop)"
-
-  if [ "$backend" = "1" ] || [ "$controller" = "1" ]; then
-    effective_running=1
-  fi
 
   if [ "$backend" = "1" ] && [ "$route" = "1" ]; then
     service_state="running"; traffic_state="active"; health="ok"
   elif [ "$backend" = "1" ]; then
-    service_state="running"; traffic_state="unknown"; traffic_reason="routing_unverified"; health="degraded"; reason="Traffic routing could not be verified"
+    service_state="running"; traffic_state="inactive"; health="degraded"; reason="routing_not_active"
   elif [ "$controller" = "1" ]; then
-    service_state="running"; traffic_state="inactive"; traffic_reason="backend_stopped"; health="degraded"; reason="Backend is not running"
+    service_state="starting"; traffic_state="inactive"; health="degraded"; reason="backend_stopped"
   else
-    service_state="stopped"; traffic_state="inactive"; traffic_reason="service_stopped"; health="stopped"
+    service_state="stopped"; traffic_state="inactive"; health="degraded"; reason="service_stopped"
   fi
 
   if [ "$configured" = "0" ]; then
     configuration_state="missing"
-    if [ "$service_state" = "stopped" ]; then
-      health="stopped"
-    else
-      health="degraded"
-      reason="Configuration is missing"
-    fi
+    service_state="not_configured"
+    traffic_state="inactive"
+    health="degraded"
+    reason="config_missing"
   fi
 
-  provider_json podkop Podkop sing-box "$installed" "$ui" "$version" podkop "$effective_running" "$enabled" sing-box "$backend" "" "$configured" "$mode" "$count" "$health" "$reason" "$url" "$service_state" "$traffic_state" "$traffic_reason" "$routing_mode" "$configuration_state" "$controller" "$route" nftables PodkopTable
+  provider_json podkop Podkop "$installed" "$version" "$configured" "$enabled" "$service_state" "$traffic_state" "$health" "$reason" "$mode" "$routing_mode" "$configuration_state" sing-box "$url" "$ui" "$count" podkop "$effective" "$controller" "$backend" "$route" nftables PodkopTable podkop "$protocol"
 }
 
-netshift_status() {
-  local pkg=0 ui=0 init=0 config=0 bin=0 installed=0 running=0 enabled=0 backend=0 configured=0
-  local route=0 version="" count=0 mode="" routing_mode="unknown" configuration_state="unknown" health="unknown" reason="" url="" service_state="unknown" traffic_state="unknown" traffic_reason=""
+netshift_owner_evidence() {
+  [ -n "$SNAPSHOT_UCI_NETSHIFT" ] || exists_path /etc/init.d/netshift || exists_path /usr/bin/netshift || package_any netshift luci-app-netshift
+}
 
-  package_installed netshift && pkg=1
+netshift_provider() {
+  local installed=0 ui=0 controller=0 enabled=0 backend=0 configured=0 route=0 effective=0 owner_evidence=0
+  local version="" count=0 mode="" routing_mode="unknown" configuration_state="unknown"
+  local service_state="unknown" traffic_state="unknown" health="unknown" reason="" url="" protocol=""
+
+  netshift_owner_evidence || return 1
+  owner_evidence=1
+  installed=1
   package_installed luci-app-netshift && ui=1
-  exists_path /etc/init.d/netshift && init=1
-  exists_path /etc/config/netshift && config=1
-  exists_path /usr/bin/netshift && bin=1
-  [ "$pkg$ui$init$config$bin" != "00000" ] && installed=1
-  [ "$installed" = "1" ] || return 1
-
-  service_running netshift && running=1
+  service_running netshift && controller=1
   service_enabled netshift && enabled=1
-  service_running sing-box || pidof sing-box >/dev/null 2>&1 && backend=1
-  uci_configured netshift && configured=1
-  traffic_mechanism_active netshift && route=1
-  version="$(package_version netshift)"
-  count="$(uci_section_count netshift)"
-  mode="$(uci_mode netshift)"
+  singbox_running && backend=1
+  [ "$(uci_section_count_from "$SNAPSHOT_UCI_NETSHIFT" netshift)" -gt 0 ] && configured=1
+  [ "$SNAPSHOT_NETSHIFT_ROUTING" = "1" ] && route=1
+  if [ "$controller" = "1" ] || [ "$route" = "1" ] || { [ "$backend" = "1" ] && [ "$owner_evidence" = "1" ]; }; then
+    effective=1
+  fi
+  version="$(first_package_version netshift luci-app-netshift)"
+  count="$(uci_section_count_from "$SNAPSHOT_UCI_NETSHIFT" netshift)"
+  mode="$(printf '%s\n' "$SNAPSHOT_UCI_NETSHIFT" | sed -n "s/^netshift\\.[^.]*\\.\\(mode\\|routing_mode\\|proxy_mode\\)=['\"]*\\([^'\"]*\\)['\"]*$/\\2/p" | head -n 1)"
   routing_mode="$(provider_routing_mode netshift "$mode")"
   configuration_state="$(provider_configuration_state netshift "$configured")"
+  protocol="$(protocol_from_text "$(printf '%s\n' "$SNAPSHOT_UCI_NETSHIFT"; read_limited_file /etc/sing-box/config.json)")"
   [ "$ui" = "1" ] && url="$(menu_url netshift)"
 
-  if [ "$running" = "0" ]; then
-    service_state="stopped"; traffic_state="inactive"; traffic_reason="service_stopped"; health="stopped"
-  elif [ "$backend" = "0" ]; then
-    service_state="running"; traffic_state="inactive"; traffic_reason="backend_stopped"; health="degraded"; reason="Backend is not running"
-  elif [ "$configured" = "0" ]; then
-    service_state="running"; traffic_state="inactive"; traffic_reason="config_missing"; health="degraded"; reason="Configuration is missing"
-  elif [ "$route" = "1" ]; then
+  if [ "$configured" = "0" ]; then
+    service_state="not_configured"; traffic_state="inactive"; health="degraded"; reason="config_missing"
+  elif [ "$backend" = "1" ] && [ "$route" = "1" ]; then
     service_state="running"; traffic_state="active"; health="ok"
+  elif [ "$backend" = "1" ]; then
+    service_state="running"; traffic_state="inactive"; health="degraded"; reason="routing_not_active"
+  elif [ "$controller" = "1" ]; then
+    service_state="starting"; traffic_state="inactive"; health="degraded"; reason="backend_stopped"
   else
-    service_state="running"; traffic_state="unknown"; traffic_reason="routing_unverified"; health="degraded"; reason="Traffic routing could not be verified"
+    service_state="stopped"; traffic_state="inactive"; health="degraded"; reason="service_stopped"
   fi
 
-  provider_json netshift NetShift sing-box "$installed" "$ui" "$version" netshift "$running" "$enabled" sing-box "$backend" "" "$configured" "$mode" "$count" "$health" "$reason" "$url" "$service_state" "$traffic_state" "$traffic_reason" "$routing_mode" "$configuration_state"
+  provider_json netshift NetShift "$installed" "$version" "$configured" "$enabled" "$service_state" "$traffic_state" "$health" "$reason" "$mode" "$routing_mode" "$configuration_state" sing-box "$url" "$ui" "$count" netshift "$effective" "$controller" "$backend" "$route" nftables NetShiftTable netshift "$protocol"
 }
 
-ssclash_status() {
-  local ui=0 init=0 dir=0 core=0 config=0 installed=0 running=0 enabled=0 backend=0 configured=0
-  local route=0 version="" count=0 mode="" routing_mode="unknown" configuration_state="unknown" health="unknown" reason="" url="" service_state="unknown" traffic_state="unknown" traffic_reason=""
+ssclash_owner_evidence() {
+  package_installed luci-app-ssclash || [ -n "$SNAPSHOT_UCI_SSCLASH" ] || exists_path /etc/init.d/ssclash
+}
 
+ssclash_mihomo_running() {
+  process_running '(^|[ /])(/opt/clash/[^ ]*/)?(mihomo|clash)([ ]|$)' || service_running clash || service_running ssclash
+}
+
+ssclash_routing_active() {
+  collect_snapshot
+  printf '%s\n%s\n%s\n' "$SNAPSHOT_IP_LINKS" "$SNAPSHOT_IP_RULES" "$SNAPSHOT_IP_ROUTES" | grep -Eiq '(mihomo|clash|utun|meta)'
+}
+
+ssclash_provider() {
+  local installed=0 ui=0 controller=0 enabled=0 core=0 backend=0 configured=0 route=0 effective=0
+  local version="" count=0 mode="" routing_mode="unknown" configuration_state="unknown"
+  local service_name="ssclash" service_state="unknown" traffic_state="unknown" health="unknown" reason="" url="" protocol=""
+
+  ssclash_owner_evidence || return 1
+  installed=1
   package_installed luci-app-ssclash && ui=1
-  exists_path /etc/init.d/clash && init=1
-  exists_path /opt/clash && dir=1
-  binary_exists mihomo clash /opt/clash/mihomo /opt/clash/clash && core=1
-  [ -s /etc/config/ssclash ] || [ -s /etc/config/clash ] || [ -s /opt/clash/config.yaml ] || [ -s /opt/clash/config.yml ] && config=1
-  [ "$ui$init$dir$core$config" != "00000" ] && installed=1
-  [ "$installed" = "1" ] || return 1
-
-  service_running clash && running=1
-  service_enabled clash && enabled=1
-  pidof mihomo >/dev/null 2>&1 || pidof clash >/dev/null 2>&1 && backend=1
-  [ "$config" = "1" ] && configured=1
-  traffic_mechanism_active ssclash && route=1
-  version="$(package_version luci-app-ssclash)"
-  [ -s /etc/config/ssclash ] && count="$(uci_section_count ssclash)" || count=0
-  mode="$(uci_mode ssclash)"
+  service_running ssclash && controller=1
+  if service_running clash; then
+    controller=1
+    service_name="clash"
+  fi
+  service_enabled ssclash && enabled=1
+  if [ "$enabled" != "1" ] && service_enabled clash; then
+    enabled=1
+  fi
+  binary_exists mihomo clash /opt/clash/mihomo /opt/clash/clash /opt/clash/bin/mihomo /opt/clash/bin/clash && core=1
+  ssclash_mihomo_running && backend=1
+  if [ -n "$SNAPSHOT_UCI_SSCLASH" ] || [ -n "$SNAPSHOT_UCI_CLASH" ] || [ -s /opt/clash/config.yaml ] || [ -s /opt/clash/config.yml ]; then
+    configured=1
+  fi
+  ssclash_routing_active && route=1
+  if [ "$backend" = "1" ] || [ "$controller" = "1" ]; then
+    effective=1
+  fi
+  version="$(first_package_version luci-app-ssclash mihomo clash)"
+  count="$(uci_section_count_from "$SNAPSHOT_UCI_SSCLASH" ssclash)"
+  [ "$count" -gt 0 ] || count="$(uci_section_count_from "$SNAPSHOT_UCI_CLASH" clash)"
+  mode="$(printf '%s\n%s\n' "$SNAPSHOT_UCI_SSCLASH" "$SNAPSHOT_UCI_CLASH" | sed -n "s/^[^.]*\\.[^.]*\\.\\(mode\\|proxy_mode\\|operation_mode\\)=['\"]*\\([^'\"]*\\)['\"]*$/\\2/p" | head -n 1)"
   routing_mode="$(provider_routing_mode ssclash "$mode")"
   configuration_state="$(provider_configuration_state ssclash "$configured")"
+  protocol="$(protocol_from_text "$(printf '%s\n%s\n' "$SNAPSHOT_UCI_SSCLASH" "$SNAPSHOT_UCI_CLASH"; read_limited_file /opt/clash/config.yaml; read_limited_file /opt/clash/config.yml)")"
   [ "$ui" = "1" ] && url="$(menu_url ssclash)"
 
-  if [ "$running" = "0" ]; then
-    service_state="stopped"; traffic_state="inactive"; traffic_reason="service_stopped"; health="stopped"
+  if [ "$configured" = "0" ]; then
+    service_state="not_configured"; traffic_state="inactive"; health="degraded"; reason="config_missing"
   elif [ "$core" = "0" ]; then
-    service_state="running"; traffic_state="inactive"; traffic_reason="core_missing"; health="degraded"; reason="Mihomo core is missing"
+    service_state="stopped"; traffic_state="inactive"; health="error"; reason="core_missing"
   elif [ "$backend" = "0" ]; then
-    service_state="running"; traffic_state="inactive"; traffic_reason="backend_stopped"; health="degraded"; reason="Mihomo core is not running"
-  elif [ "$configured" = "0" ]; then
-    service_state="running"; traffic_state="inactive"; traffic_reason="config_missing"; health="degraded"; reason="Configuration is missing"
+    service_state="stopped"; traffic_state="inactive"; health="degraded"; reason="service_stopped"
   elif [ "$route" = "1" ]; then
     service_state="running"; traffic_state="active"; health="ok"
   else
-    service_state="running"; traffic_state="unknown"; traffic_reason="routing_unverified"; health="degraded"; reason="Traffic routing could not be verified"
+    service_state="running"; traffic_state="unknown"; health="degraded"; reason="traffic_unverified"
   fi
 
-  provider_json ssclash SSClash Mihomo "$installed" "$ui" "$version" clash "$running" "$enabled" Mihomo "$backend" "" "$configured" "$mode" "$count" "$health" "$reason" "$url" "$service_state" "$traffic_state" "$traffic_reason" "$routing_mode" "$configuration_state"
+  provider_json ssclash SSClash "$installed" "$version" "$configured" "$enabled" "$service_state" "$traffic_state" "$health" "$reason" "$mode" "$routing_mode" "$configuration_state" Mihomo "$url" "$ui" "$count" "$service_name" "$effective" "$controller" "$backend" "$route" routing null ssclash "$protocol"
 }
 
 status() {
-  local providers="" item="" installed_count=0 running_count=0 active_count=0 state="empty" conflict=false
+  local providers="" item="" provider="" installed_count=0 running_count=0 active_count=0 state="empty" conflict=false
 
-  for provider in podkop_status ssclash_status netshift_status; do
-    item="$($provider 2>/dev/null)" || item=""
+  collect_snapshot
+
+  for provider in $(provider_registry); do
+    item="$("${provider}_provider" 2>/dev/null)" || item=""
     [ -n "$item" ] || continue
     providers="${providers:+$providers,}$item"
     installed_count=$((installed_count + 1))
@@ -390,6 +602,8 @@ status() {
   elif printf '%s' "$providers" | grep -q '"traffic_state":"unknown"'; then
     state="unknown"
   elif printf '%s' "$providers" | grep -q '"health":"degraded"'; then
+    state="degraded"
+  elif printf '%s' "$providers" | grep -q '"health":"error"'; then
     state="degraded"
   elif printf '%s' "$providers" | grep -q '"health":"unknown"'; then
     state="unknown"

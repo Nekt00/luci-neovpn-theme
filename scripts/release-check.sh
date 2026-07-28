@@ -49,7 +49,7 @@ mkdir -p "$rootfs"
 "$apk_tool" info --root "$rootfs" -d "$PKG_NAME" > "$tmp/deps.txt"
 "$apk_tool" info --root "$rootfs" -v "$PKG_NAME" > "$tmp/version.txt"
 
-grep -Eq "^${PKG_NAME}-1\\.0\\.0~rc3-r1$" "$tmp/version.txt" || fail "invalid package version"
+grep -Eq "^${PKG_NAME}-1\\.0\\.0_rc3-r1$" "$tmp/version.txt" || fail "invalid package version"
 grep -qx 'usr/share/ucode/luci/template/themes/neovpn/header.ut' "$tmp/files.txt" || fail "theme header missing"
 grep -qx 'www/luci-static/neovpn/css/pages.css' "$tmp/files.txt" || fail "theme CSS missing"
 grep -qx 'etc/uci-defaults/30_luci-theme-neovpn' "$tmp/files.txt" || fail "uci-defaults missing"
